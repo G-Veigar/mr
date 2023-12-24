@@ -6,6 +6,7 @@ import postcssPresetEnv from 'postcss-preset-env'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/mr',
   plugins: [
     vue(),
   ],
