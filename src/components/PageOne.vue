@@ -1,4 +1,14 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import tippy from 'tippy.js';
+
+onMounted(() => {
+  tippy('#mint-main-btn', {
+    content: 'Coming soon!',
+    trigger: 'click',
+    theme: 'light',
+  });
+})
 </script>
 
 <template>
@@ -8,7 +18,7 @@
       <div class="sub-title">Decentralized Mixed Reality Infrastructure Network</div>
       <div class="content">DeMR is a decentralized Mixed Reality (MR) infrastructure network (MR-DePIN), built on the
         Solana Chain, leading global users into the MR world.</div>
-      <button class="mint-btn" disabled>Connect Wallet</button>
+      <button id="mint-main-btn" class="mint-btn">Connect Wallet</button>
     </div>
     <img src="../assets/page-bg.png" class="bg-img" />
     <div class="bottom-mask"></div>

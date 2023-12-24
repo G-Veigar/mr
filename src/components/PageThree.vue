@@ -1,5 +1,23 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+import { preloadImg } from '../utils/preload'
+import mr1 from '../assets/mr1.png'
+import mr2 from '../assets/mr2.png'
+import mr3 from '../assets/mr3.png'
+import mr4 from '../assets/mr4.png'
+import mr5 from '../assets/mr5.png'
+import mr6 from '../assets/mr6.png'
 
+onMounted(() => {
+  setTimeout(() => {
+    preloadImg(mr1)
+    preloadImg(mr2)
+    preloadImg(mr3)
+    preloadImg(mr4)
+    preloadImg(mr5)
+    preloadImg(mr6)
+  }, 2500)
+})
 </script>
 
 <template>
@@ -9,29 +27,29 @@
       <div class="display-wrapper">
         <div class="row">
           <div class="card-item">
-            <img class="card-img" src="../assets/mr4.png" />
+            <img class="card-img" :src="mr4" loading="lazy"/>
             <div class="info">Scenic Era</div>
           </div>
           <div class="card-item">
-            <img class="card-img" src="../assets/mr2.png" />
+            <img class="card-img" :src="mr2" loading="lazy"/>
             <div class="info">Exhibition Hall</div>
           </div>
           <div class="card-item">
-            <img class="card-img" src="../assets/mr6.png" />
+            <img class="card-img" :src="mr6" loading="lazy"/>
             <div class="info">Museum</div>
           </div>
         </div>
         <div class="row">
           <div class="card-item">
-            <img class="card-img" src="../assets/mr3.png" />
+            <img class="card-img" :src="mr3" loading="lazy"/>
             <div class="info">Garden Era</div>
           </div>
           <div class="card-item">
-            <img class="card-img" src="../assets/mr1.png" />
+            <img class="card-img" :src="mr1" loading="lazy"/>
             <div class="info">Business Street</div>
           </div>
           <div class="card-item">
-            <img class="card-img" src="../assets/mr5.png" />
+            <img class="card-img" :src="mr5" loading="lazy"/>
             <div class="info">Shopping Mall</div>
           </div>
         </div>

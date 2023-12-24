@@ -5,6 +5,8 @@ import HomeFooter from '@/components/HomeFooter.vue';
 import PageOne from '@/components/PageOne.vue';
 import PageTwo from '@/components/PageTwo.vue';
 import PageThree from '@/components/PageThree.vue';
+import 'tippy.js/dist/tippy.css'
+import 'tippy.js/themes/light.css';
 // import { WalletMultiButton } from "solana-wallets-vue";
 // import {
 //   Connection,

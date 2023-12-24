@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import whitePaperLink from '../assets/whitepaper.pdf'
 import { event } from '../utils/event-bus'
+import tippy from 'tippy.js';
 // @ts-ignore
 // import { WalletMultiButton } from "solana-wallets-vue";
 defineProps<{
@@ -39,6 +40,14 @@ function goNFT() {
   event.emit('goToNft')
   toggleMenu(false)
 }
+
+onMounted(() => {
+  tippy('#wallet', {
+    content: 'Coming soon!',
+    trigger: 'click',
+    theme: 'light',
+  });
+})
 </script>
 
 <template>
@@ -49,7 +58,7 @@ function goNFT() {
         <div class="btn-group pc">
           <button class="nft-btn" @click="goNFT">NFT</button>
           <button class="paper-btn" @click="goWhitePaper">White Paper</button>
-          <button class="wallet-btn" v-if="disabled">Connect Wallet</button>
+          <button id="wallet" class="wallet-btn" v-if="disabled">Connect Wallet</button>
           <!-- <wallet-multi-button v-else></wallet-multi-button> -->
         </div>
         <div class="btn-group h5">

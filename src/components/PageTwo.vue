@@ -5,8 +5,8 @@ import viewImg1 from '../assets/card1.png'
 import viewImg2 from '../assets/card2.png'
 import viewImg3 from '../assets/card3.png'
 import { event } from '../utils/event-bus'
-import tippy from 'tippy.js';
-import 'tippy.js/dist/tippy.css'
+// import tippy from 'tippy.js';
+import { preloadImg } from '../utils/preload'
 
 const tabActiveIndex = ref(0)
 
@@ -49,13 +49,11 @@ event.on('goToNft', () => {
 })
 
 onMounted(() => {
-  tippy('#mint1', {
-    content: 'Comming soon!',
-    trigger: 'click',
-  });
+  setTimeout(() => {
+    preloadImg(viewImg2)
+    preloadImg(viewImg3)
+  }, 1500)
 })
-function showTip() {
-}
 </script>
 
 <template>
@@ -69,7 +67,7 @@ function showTip() {
             <div class="sub-title">{{ tabViewDataList[0].title }}</div>
             <div class="content">{{ tabViewDataList[0].content }}</div>
             <div class="tip">{{ tabViewDataList[0].tip }}</div>
-            <button id="mint1" class="mint-btn">Coming Soon</button>
+            <button class="mint-btn" disabled>Coming Soon</button>
           </div>
           <img class="view-img" :src="tabViewDataList[0].img" />
         </div>
@@ -78,7 +76,7 @@ function showTip() {
             <div class="sub-title">{{ tabViewDataList[1].title }}</div>
             <div class="content">{{ tabViewDataList[1].content }}</div>
             <div class="tip">{{ tabViewDataList[1].tip }}</div>
-            <button class="mint-btn" disabled @click="showTip">Coming Soon</button>
+            <button class="mint-btn" disabled>Coming Soon</button>
           </div>
           <img class="view-img" :src="tabViewDataList[1].img" />
         </div>
