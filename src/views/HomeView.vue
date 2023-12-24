@@ -17,13 +17,21 @@ import PageThree from '@/components/PageThree.vue';
 // import fullpage from 'fullpage.js'
 
 const connectDisabled = ref(true);
+
+const pageTwoRef = ref()
+
+function goPageTwo() {
+  if(pageTwoRef.value) {
+    pageTwoRef.value.scroll2View()
+  }
+}
 </script>
 
 <template>
-  <home-header :disabled="connectDisabled"></home-header>
+  <home-header :disabled="connectDisabled" @nft="goPageTwo"></home-header>
   <main id="main">
     <page-one></page-one>
-    <page-two></page-two>
+    <page-two ref="pageTwoRef"></page-two>
     <page-three></page-three>
   </main>
   <home-footer></home-footer>

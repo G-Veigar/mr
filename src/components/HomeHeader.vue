@@ -1,17 +1,43 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import whitePaperLink from '../assets/whitepaper.pdf'
+import { event } from '../utils/event-bus'
 // @ts-ignore
 // import { WalletMultiButton } from "solana-wallets-vue";
 defineProps<{
   disabled: boolean,
 }>()
 
+// const emits = defineEmits(['nft'])
+
 const h5MenuOpen = ref(false)
 const menuListShow = ref(false)
 
-function toggleMenu() {
-  h5MenuOpen.value = !h5MenuOpen.value
-  menuListShow.value = !menuListShow.value
+function toggleMenu(status: boolean) {
+  h5MenuOpen.value = status ?? !h5MenuOpen.value
+  menuListShow.value = status ?? !menuListShow.value
+}
+
+function goTwitter() {
+  window.open('https://x.com/DeMR_official?s=20')
+}
+
+function goDiscord() {
+  window.open('https://discord.gg/msjPncCnsJ')
+}
+
+function goMedium() {
+  window.open('https://medium.com/@DeMR_official')
+}
+
+function goWhitePaper() {
+  window.open(whitePaperLink)
+  toggleMenu(false)
+}
+
+function goNFT() {
+  event.emit('goToNft')
+  toggleMenu(false)
 }
 </script>
 
@@ -21,29 +47,29 @@ function toggleMenu() {
       <div class="main-wrapper">
         <img class="logo" src="../assets/logo.svg" alt="logo" />
         <div class="btn-group pc">
-          <button class="nft-btn">NFT</button>
-          <button class="paper-btn">White Paper</button>
+          <button class="nft-btn" @click="goNFT">NFT</button>
+          <button class="paper-btn" @click="goWhitePaper">White Paper</button>
           <button class="wallet-btn" v-if="disabled">Connect Wallet</button>
           <!-- <wallet-multi-button v-else></wallet-multi-button> -->
         </div>
         <div class="btn-group h5">
-          <button class="menu-btn open" v-if="!h5MenuOpen" @click="toggleMenu"></button>
-          <button class="menu-btn close" v-else @click="toggleMenu"></button>
+          <button class="menu-btn open" v-if="!h5MenuOpen" @click="toggleMenu(true)"></button>
+          <button class="menu-btn close" v-else @click="toggleMenu(false)"></button>
         </div>
       </div>
       <div class="menu-list" :class="{ show: menuListShow }">
-        <div class="menu-item">
+        <div class="menu-item" @click="goNFT">
           <div class="menu-name">NFT</div>
           <div class="arrow-icon"></div>
         </div>
-        <div class="menu-item">
+        <div class="menu-item" @click="goWhitePaper">
           <div class="menu-name">White Paper</div>
           <div class="arrow-icon"></div>
         </div>
         <div class="icon-btns">
-          <button class="btn"><img src="../assets/footer-btn1.png"></button>
-          <button class="btn"><img src="../assets/footer-btn2.png"></button>
-          <button class="btn"><img src="../assets/footer-btn3.png"></button>
+          <button class="btn" @click="goTwitter"><img src="../assets/footer-btn1.png"></button>
+          <button class="btn" @click="goDiscord"><img src="../assets/footer-btn2.png"></button>
+          <button class="btn" @click="goMedium"><img src="../assets/footer-btn3.png"></button>
         </div>
       </div>
     </div>
@@ -174,24 +200,30 @@ function toggleMenu() {
   #home-header {
     .header-main {
       max-width: 1200PX;
+
       .main-wrapper {
         height: 68PX;
         padding: 0;
       }
+
       .logo {
         width: 126PX;
       }
 
       .btn-group {
         font-size: 14PX;
+
         &.pc {
           display: block;
         }
+
         &.h5 {
           display: none;
         }
+
         button {
           line-height: 24PX;
+
           &:not(:first-child) {
             margin-left: 80PX;
           }
@@ -210,5 +242,5 @@ function toggleMenu() {
       }
     }
   }
-}
-</style>
+}</style>
+../utils/event-bus

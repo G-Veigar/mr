@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, onMounted, type Ref } from 'vue'
 import TabBar from './TabBar.vue'
 import viewImg1 from '../assets/card1.png'
 import viewImg2 from '../assets/card2.png'
 import viewImg3 from '../assets/card3.png'
-
+import { event } from '../utils/event-bus'
+import tippy from 'tippy.js';
+import 'tippy.js/dist/tippy.css'
 
 const tabActiveIndex = ref(0)
 
@@ -29,25 +31,67 @@ const tabViewDataList = [
   },
 ]
 
-const currentViewData = computed(() => {
-  return tabViewDataList[tabActiveIndex.value];
+// const currentViewData = computed(() => {
+//   return tabViewDataList[tabActiveIndex.value];
+// })
+
+const pageRef:Ref<HTMLDivElement | undefined> = ref();
+
+const isMobile = document.documentElement.clientWidth < 1024
+
+event.on('goToNft', () => {
+  if(pageRef.value) {
+    pageRef.value.scrollIntoView({
+      behavior: "smooth",
+      block: isMobile ? 'end' : 'start',
+    })
+  }
 })
+
+onMounted(() => {
+  tippy('#mint1', {
+    content: 'Comming soon!',
+    trigger: 'click',
+  });
+})
+function showTip() {
+}
 </script>
 
 <template>
-  <section class="page page-two">
+  <section class="page page-two" ref="pageRef">
     <div class="page-main">
       <div class="page-title">Collaborate With DeMR Network<br class="br" />To Shape The MR World</div>
       <tab-bar class="page-tab" :active-index="tabActiveIndex" @change="tabActiveIndex = $event"></tab-bar>
-      <div class="tab-view">
-        <div class="view-left">
-          <div class="sub-title">{{ currentViewData.title }}</div>
-          <div class="content">{{ currentViewData.content }}</div>
-          <div class="tip">{{ currentViewData.tip }}</div>
-          <button class="mint-btn" disabled>Coming Soon</button>
+      <Transition mode="out-in">
+        <div class="tab-view one" v-if="tabActiveIndex === 0">
+          <div class="view-left">
+            <div class="sub-title">{{ tabViewDataList[0].title }}</div>
+            <div class="content">{{ tabViewDataList[0].content }}</div>
+            <div class="tip">{{ tabViewDataList[0].tip }}</div>
+            <button id="mint1" class="mint-btn">Coming Soon</button>
+          </div>
+          <img class="view-img" :src="tabViewDataList[0].img" />
         </div>
-        <img class="view-img" :src="currentViewData.img" />
-      </div>
+        <div class="tab-view two" v-else-if="tabActiveIndex === 1">
+          <div class="view-left">
+            <div class="sub-title">{{ tabViewDataList[1].title }}</div>
+            <div class="content">{{ tabViewDataList[1].content }}</div>
+            <div class="tip">{{ tabViewDataList[1].tip }}</div>
+            <button class="mint-btn" disabled @click="showTip">Coming Soon</button>
+          </div>
+          <img class="view-img" :src="tabViewDataList[1].img" />
+        </div>
+        <div class="tab-view three" v-else>
+          <div class="view-left">
+            <div class="sub-title">{{ tabViewDataList[2].title }}</div>
+            <div class="content">{{ tabViewDataList[2].content }}</div>
+            <div class="tip">{{ tabViewDataList[2].tip }}</div>
+            <button class="mint-btn" disabled>Coming Soon</button>
+          </div>
+          <img class="view-img" :src="tabViewDataList[2].img" />
+        </div>
+      </Transition>
     </div>
   </section>
 </template>
@@ -212,3 +256,16 @@ const currentViewData = computed(() => {
     }
   }
 }</style>
+
+<style>
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.2s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0.6;
+  filter: blur(3PX);
+}
+</style>

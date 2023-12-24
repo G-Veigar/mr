@@ -1,9 +1,23 @@
+<script lang="ts" setup>
+function goTwitter() {
+  window.open('https://x.com/DeMR_official?s=20')
+}
+
+function goDiscord() {
+  window.open('https://discord.gg/msjPncCnsJ')
+}
+
+function goMedium() {
+  window.open('https://medium.com/@DeMR_official')
+}
+</script>
+
 <template>
   <footer id="home-footer">
     <div class="btn-group">
-      <button class="btn"><img src="../assets/footer-btn1.png"></button>
-      <button class="btn"><img src="../assets/footer-btn2.png"></button>
-      <button class="btn"><img src="../assets/footer-btn3.png"></button>
+      <button class="btn" @click="goTwitter"><img src="../assets/footer-btn1.png"></button>
+      <button class="btn" @click="goDiscord"><img src="../assets/footer-btn2.png"></button>
+      <button class="btn" @click="goMedium"><img src="../assets/footer-btn3.png"></button>
     </div>
   </footer>
 </template>
