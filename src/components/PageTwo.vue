@@ -13,13 +13,13 @@ const tabActiveIndex = ref(0)
 const tabViewDataList = [
   {
     title: 'Compass NFT',
-    content: 'Compass NFT: Compass is the core NFT in DeMR, which is the necessary identification for contributors, who can participate in the construction of DeMR high-precision MR maps and receive DMR token rewards. Compass NFT will be limited release in stages on the official website.',
+    content: 'Compass is the core NFT in DeMR, which is the necessary identification for contributors, who can participate in the construction of DeMR high-precision MR maps and receive DMR token rewards. Compass NFT will be limited release in stages on the official website.',
     tip: 'Holding equity:  Token airdrops, Staking, and Scan to Earn',
     img: viewImg1
   },
   {
     title: 'Node License NFT',
-    content: 'Node License NFT: DeMR construction requires substantial spatial computation, real-time perception, and interactive rendering, necessitating numerous computing and storage units. To become a DeMR Computing Node, computing suppliers must hold the Node License NFT, which will be limited release in stages on the official website. ',
+    content: 'DeMR construction requires substantial spatial computation, real-time perception, and interactive rendering, necessitating numerous computing and storage units. To become a DeMR Computing Node, computing suppliers must hold the Node License NFT, which will be limited release in stages on the official website. ',
     tip: 'Holding equity: Token airdrops, Staking, and Compute to Earn',
     img: viewImg2
   },
@@ -185,8 +185,11 @@ onMounted(() => {
   .page-two {
     .page-main {
       align-items: center;
-      padding-top: 48PX;
       max-width: 1200PX;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-bottom: 6vh;
     }
 
     .br {
@@ -196,11 +199,14 @@ onMounted(() => {
     .page-title {
       font-size: 56PX;
       padding: 0;
+      letter-spacing: 1.68PX;
+      font-weight: 900;
     }
 
     .page-tab {
       margin: 0;
       margin-top: 24PX;
+      margin-bottom: 4vh;
       flex: none;
     }
 
@@ -246,14 +252,32 @@ onMounted(() => {
 
     .tab-view {
       width: 100%;
-      margin-top: 48PX;
+      height: 480PX;
+      margin-top: 0;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
     }
   }
-}</style>
+}
+@media (min-width: 1024px) and (max-height: 800px) {
+  .page-two {
+    .page-main {
+      margin-top: 60PX;
+    }
+    .page-title {
+      font-size: 50PX;
+    }
+    .page-tab {
+      margin-bottom: 0;
+    }
+    .view-left {
+      height: 320PX;
+    }
+  }
+}
+</style>
 
 <style>
 .v-enter-active,
@@ -267,3 +291,4 @@ onMounted(() => {
   filter: blur(3PX);
 }
 </style>
+

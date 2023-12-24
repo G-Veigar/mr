@@ -117,15 +117,22 @@ onMounted(() => {
 
     .page-main {
       max-width: 1200PX;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding-bottom: 6vh;
     }
 
     .card-img {
-      width: 384PX;
+      width: auto;
+      max-width: 384PX;
+      max-height: 25.6vh;
     }
 
     .main-title {
       font-size: 56PX;
-      margin: 48PX 0;
+      letter-spacing: 1.68PX;
+      margin: 0;
     }
 
     .row {

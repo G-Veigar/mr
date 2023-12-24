@@ -18,9 +18,9 @@ onMounted(() => {
       <div class="sub-title">Decentralized Mixed Reality Infrastructure Network</div>
       <div class="content">DeMR is a decentralized Mixed Reality (MR) infrastructure network (MR-DePIN), built on the
         Solana Chain, leading global users into the MR world.</div>
-      <button id="mint-main-btn" class="mint-btn">Connect Wallet</button>
+      <!-- <button id="mint-main-btn" class="mint-btn">Connect Wallet</button> -->
     </div>
-    <img src="../assets/page-bg.png" class="bg-img" />
+    <img src="../assets/earth.png" class="bg-img" />
     <div class="bottom-mask"></div>
   </section>
 </template>
@@ -103,6 +103,7 @@ onMounted(() => {
       .main-title {
         font-size: 80PX;
         margin-bottom: 32PX;
+        letter-spacing: 2.4PX;
       }
 
       .sub-title {
@@ -137,7 +138,7 @@ onMounted(() => {
     }
 
     .bottom-mask {
-      display: none;
+      height: 140PX;
     }
   }
 }

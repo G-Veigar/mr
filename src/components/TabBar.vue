@@ -65,4 +65,15 @@ const tabList = ['Contributor', 'Computing Node', 'Landholder']
     }
   }
 }
+
+@media (min-width: 1024px) and (max-height: 800px) {
+  .tab-bar {
+    .tab-bar-item {
+      border-radius: 12PX;
+      font-size: 16PX;
+      padding: 0 12PX;
+      height: 40PX;
+    }
+  }
+}
 </style>
