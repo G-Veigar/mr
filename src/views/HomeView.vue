@@ -7,18 +7,18 @@ import PageTwo from '@/components/PageTwo.vue';
 import PageThree from '@/components/PageThree.vue';
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css';
-// import { WalletMultiButton } from "solana-wallets-vue";
-// import {
-//   Connection,
-//   PublicKey,
-//   Keypair,
-//   clusterApiUrl,
-//   SystemProgram,
-// } from "@solana/web3.js";
-// import idl from "../wallet/idl.json";
+import { WalletMultiButton } from "solana-wallets-vue";
+import {
+  Connection,
+  PublicKey,
+  Keypair,
+  clusterApiUrl,
+  SystemProgram,
+} from "@solana/web3.js";
+import idl from "../wallet/idl.json";
 // import fullpage from 'fullpage.js'
 
-const connectDisabled = ref(true);
+const connectDisabled = ref(false);
 
 const pageTwoRef = ref()
 

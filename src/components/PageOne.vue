@@ -18,7 +18,7 @@ onMounted(() => {
       <div class="sub-title">Decentralized Mixed Reality Infrastructure Network</div>
       <div class="content">DeMR is a decentralized Mixed Reality (MR) infrastructure network (MR-DePIN), built on the
         Solana Chain, leading global users into the MR world.</div>
-      <!-- <button id="mint-main-btn" class="mint-btn">Connect Wallet</button> -->
+      <button id="mint-main-btn" class="mint-btn">Mint</button>
     </div>
     <img src="https://static.demr.xyz/assets/earth-L_RTugjn.png" class="bg-img" />
     <div class="bottom-mask"></div>

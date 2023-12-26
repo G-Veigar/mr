@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { event } from '../utils/event-bus'
 import tippy from 'tippy.js';
 // @ts-ignore
-// import { WalletMultiButton } from "solana-wallets-vue";
+import { WalletMultiButton } from "solana-wallets-vue";
 defineProps<{
   disabled: boolean,
 }>()
@@ -60,7 +60,7 @@ onMounted(() => {
           <button class="nft-btn" @click="goNFT">NFT</button>
           <button class="paper-btn" @click="goWhitePaper">White Paper</button>
           <button id="wallet" class="wallet-btn" v-if="disabled">Connect Wallet</button>
-          <!-- <wallet-multi-button v-else></wallet-multi-button> -->
+          <div class="wallet-btn-wrapper" v-else><wallet-multi-button></wallet-multi-button></div>
         </div>
         <div class="btn-group h5">
           <button class="menu-btn open" v-if="!h5MenuOpen" @click="toggleMenu(true)"></button>
@@ -223,8 +223,21 @@ onMounted(() => {
       .btn-group {
         font-size: 14PX;
 
+        .wallet-btn-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          width: 200PX;
+        }
+
+        >>> .swv-button {
+          height: 36PX;
+          font-size: 14PX;
+          border-radius: 18PX;
+        }
+
         &.pc {
-          display: block;
+          display: flex;
         }
 
         &.h5 {
@@ -253,4 +266,3 @@ onMounted(() => {
     }
   }
 }</style>
-../utils/event-bus
