@@ -20,7 +20,7 @@ onMounted(() => {
         Solana Chain, leading global users into the MR world.</div>
       <!-- <button id="mint-main-btn" class="mint-btn">Connect Wallet</button> -->
     </div>
-    <img src="../assets/earth.png" class="bg-img" />
+    <img src="https://static.demr.xyz/assets/earth-L_RTugjn.png" class="bg-img" />
     <div class="bottom-mask"></div>
   </section>
 </template>

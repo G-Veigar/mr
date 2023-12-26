@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted, type Ref } from 'vue'
 import TabBar from './TabBar.vue'
-import viewImg1 from '../assets/card1.png'
-import viewImg2 from '../assets/card2.png'
-import viewImg3 from '../assets/card3.png'
 import { event } from '../utils/event-bus'
 // import tippy from 'tippy.js';
 import { preloadImg } from '../utils/preload'
+
+const viewImg1 = 'https://static.demr.xyz/assets/card1-zxjo_0rL.png'
+const viewImg2 = 'https://static.demr.xyz/assets/card2-9-hKOMn3.png'
+const viewImg3 = 'https://static.demr.xyz/assets/card3-rA3YVBqM.png'
+
+
 
 const tabActiveIndex = ref(0)
 

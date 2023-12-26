@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import whitePaperLink from '../assets/whitepaper.pdf'
 import { event } from '../utils/event-bus'
 import tippy from 'tippy.js';
 // @ts-ignore
@@ -8,6 +7,8 @@ import tippy from 'tippy.js';
 defineProps<{
   disabled: boolean,
 }>()
+
+const whitePaperLink = 'https://static.demr.xyz/assets/whitepaper-IvGRdOjE.pdf'
 
 // const emits = defineEmits(['nft'])
 

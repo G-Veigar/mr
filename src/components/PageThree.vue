@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { preloadImg } from '../utils/preload'
-import mr1 from '../assets/mr1.png'
-import mr2 from '../assets/mr2.png'
-import mr3 from '../assets/mr3.png'
-import mr4 from '../assets/mr4.png'
-import mr5 from '../assets/mr5.png'
-import mr6 from '../assets/mr6.png'
+
+const mr1 = 'https://static.demr.xyz/assets/mr1-NHKBwwC0.png'
+const mr2 = 'https://static.demr.xyz/assets/mr2-Rd7SHeBL.png'
+const mr3 = 'https://static.demr.xyz/assets/mr3-2vT-HEYO.png'
+const mr4 = 'https://static.demr.xyz/assets/mr4-fVxRvdLo.png'
+const mr5 = 'https://static.demr.xyz/assets/mr5-0SzSf-vv.png'
+const mr6 = 'https://static.demr.xyz/assets/mr6-0_ZMXkT-.png'
 
 onMounted(() => {
   setTimeout(() => {

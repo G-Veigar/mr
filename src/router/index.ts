@@ -9,14 +9,14 @@ const router = createRouter({
       name: 'home',
       component: HomeView
     },
-    {
-      path: '/mint',
-      name: 'mint',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/MintView.vue')
-    }
+    // {
+    //   path: '/mint',
+    //   name: 'mint',
+    //   // route level code-splitting
+    //   // this generates a separate chunk (About.[hash].js) for this route
+    //   // which is lazy-loaded when the route is visited.
+    //   component: () => import('../views/MintView.vue')
+    // }
   ]
 })
 
