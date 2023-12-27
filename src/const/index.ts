@@ -1,6 +1,6 @@
-import viewImg1 from '../assets/card1.png'
-import viewImg2 from '../assets/card2.png'
-import viewImg3 from '../assets/card3.png'
+import viewImg1 from '../assets/mint-card1.png'
+import viewImg2 from '../assets/mint-card2.png'
+import viewImg3 from '../assets/mint-card3.png'
 
 export type NFTData = {
   title: string,

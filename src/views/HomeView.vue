@@ -1,42 +1,17 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import HomeHeader from '@/components/HomeHeader.vue';
-import HomeFooter from '@/components/HomeFooter.vue';
 import PageOne from '@/components/PageOne.vue';
 import PageTwo from '@/components/PageTwo.vue';
 import PageThree from '@/components/PageThree.vue';
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css';
-import { WalletMultiButton } from "solana-wallets-vue";
-import {
-  Connection,
-  PublicKey,
-  Keypair,
-  clusterApiUrl,
-  SystemProgram,
-} from "@solana/web3.js";
-import idl from "../wallet/idl.json";
-// import fullpage from 'fullpage.js'
-
-const connectDisabled = ref(false);
-
-const pageTwoRef = ref()
-
-function goPageTwo() {
-  if(pageTwoRef.value) {
-    pageTwoRef.value.scroll2View()
-  }
-}
 </script>
 
 <template>
-  <home-header :disabled="connectDisabled" @nft="goPageTwo"></home-header>
   <main id="main">
     <page-one></page-one>
-    <page-two ref="pageTwoRef"></page-two>
+    <page-two></page-two>
     <page-three></page-three>
   </main>
-  <home-footer></home-footer>
 </template>
 
 <style>

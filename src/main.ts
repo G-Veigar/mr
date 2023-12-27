@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router'
 import SolanaWallets from "solana-wallets-vue";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { Modal } from 'ant-design-vue';
 import {
     PhantomWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
@@ -22,5 +23,6 @@ const app = createApp(App)
 
 app.use(router)
 app.use(SolanaWallets, walletOptions)
+app.use(Modal)
 
 app.mount("#app");

@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { event } from '../utils/event-bus'
 import tippy from 'tippy.js';
 // @ts-ignore
-import { WalletMultiButton } from "solana-wallets-vue";
+import { useWallet, WalletMultiButton } from "solana-wallets-vue";
 defineProps<{
   disabled: boolean,
 }>()
@@ -14,6 +14,8 @@ const whitePaperLink = 'https://static.demr.xyz/assets/whitepaper-IvGRdOjE.pdf'
 
 const h5MenuOpen = ref(false)
 const menuListShow = ref(false)
+
+const { wallet } = useWallet();
 
 function toggleMenu(status: boolean) {
   h5MenuOpen.value = status ?? !h5MenuOpen.value
@@ -60,9 +62,12 @@ onMounted(() => {
           <button class="nft-btn" @click="goNFT">NFT</button>
           <button class="paper-btn" @click="goWhitePaper">White Paper</button>
           <button id="wallet" class="wallet-btn" v-if="disabled">Connect Wallet</button>
-          <div class="wallet-btn-wrapper" v-else><wallet-multi-button></wallet-multi-button></div>
+          <div class="wallet-btn-wrapper" v-else><wallet-multi-button :dark="true"></wallet-multi-button></div>
         </div>
         <div class="btn-group h5">
+          <div class="wallet-wrapper" :class="{connected: wallet}">
+            <wallet-multi-button :dark="true"></wallet-multi-button>
+          </div>
           <button class="menu-btn open" v-if="!h5MenuOpen" @click="toggleMenu(true)"></button>
           <button class="menu-btn close" v-else @click="toggleMenu(false)"></button>
         </div>
@@ -102,6 +107,45 @@ onMounted(() => {
     border-bottom: none;
   }
 
+  .wallet-wrapper {
+    width: 32px;
+    height: 32px;
+    background: url('../assets/wallet-h5.svg') no-repeat 100% / 100% ;
+    background-position: center -2px;
+    display: flex;
+    align-items: stretch;
+
+    &.connected {
+      background: none;
+      width: auto;
+      height: auto;
+      >>> .swv-button {
+        padding: 0 16px;
+        font-size: 12px;
+        opacity: 1;
+        height: 36px;
+        line-height: 36px;
+        font-weight: 500;
+      }
+    }
+
+    >>> .swv-button {
+      width: 100%;
+      padding: 0;
+      font-size: 10PX;
+      opacity: 0;
+      border-radius: 9999px;
+      background: #1C1C1C;
+      .swv-button-icon {
+        display: none;
+      }
+
+      p {
+        margin-left: 0;
+      }
+    }
+  }
+
   .header-main {
     flex: auto;
     display: flex;
@@ -134,7 +178,13 @@ onMounted(() => {
       }
 
       &.h5 {
-        display: block;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        .menu-btn {
+          margin-left: 16px;
+        }
       }
 
       button {
@@ -143,6 +193,19 @@ onMounted(() => {
         &:not(:first-child) {
           margin-left: 80px;
         }
+      }
+
+      >>> .swv-button {
+        background: #1C1C1C;
+      }
+
+      >>> .swv-dropdown-list {
+        background: #1C1C1C;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      >>> .swv-dropdown-list-item:not([disabled]):hover {
+        background: #3C3C3C;
       }
 
       .menu-btn {
@@ -266,3 +329,21 @@ onMounted(() => {
     }
   }
 }</style>
+
+<style>
+.swv-modal-wrapper {
+  background: #1C1C1C !important;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+
+  .swv-button:not([disabled]):hover {
+    background: #3C3C3C !important;
+  }
+}
+.swv-wallet-status {
+  color: #ccc !important;
+}
+body .swv-modal-button-close {
+  background-color: #1C1C1C !important;
+  color: #aaa;
+}
+</style>

@@ -79,6 +79,17 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.2s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0.6;
+  filter: blur(3PX);
+}
+
 .page-two {
   &.page {
     padding-top: 0;
@@ -263,16 +274,4 @@ onMounted(() => {
 }
 </style>
 
-<style>
-.v-enter-active,
-.v-leave-active {
-  transition: all 0.2s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0.6;
-  filter: blur(3PX);
-}
-</style>
 
