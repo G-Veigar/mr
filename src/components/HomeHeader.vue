@@ -297,6 +297,14 @@ onMounted(() => {
           height: 36PX;
           font-size: 14PX;
           border-radius: 18PX;
+
+          .swv-button-icon {
+            display: none;
+          }
+
+          p {
+            margin-left: 0;
+          }
         }
 
         &.pc {
@@ -332,18 +340,59 @@ onMounted(() => {
 
 <style>
 .swv-modal-wrapper {
-  background: #1C1C1C !important;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #000 !important;
+  border: 1PX solid rgba(255, 255, 255, 0.16);
+  padding-top: 104PX;
 
   .swv-button:not([disabled]):hover {
-    background: #3C3C3C !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
+  .swv-modal-title {
+    font-size: 16PX;
+    font-weight: 500;
+    position: absolute;
+    left: 24PX;
+    top: 40PX;
+    margin: 0;
+    padding: 0;
+    height: 20PX;
+    line-height: 20PX;
+  }
+
+  .swv-modal-button-close {
+    top: 28PX;
+  }
+
+  .swv-modal-list {
+    padding: 0 24PX;
+
+    li {
+      margin-bottom: 16PX;
+    }
+
+    .swv-button {
+      font-size: 14PX;
+      font-weight: 500;
+      border-radius: 12PX;
+    }
+
+    /* .swv-button-icon {
+      border-radius: 50%;
+      overflow: hidden;
+    } */
   }
 }
 .swv-wallet-status {
   color: #ccc !important;
 }
 body .swv-modal-button-close {
-  background-color: #1C1C1C !important;
+  background-color: #000 !important;
   color: #aaa;
+}
+
+.swv-dropdown {
+  .swv-dropdown-list-item {
+    font-size: 14PX;
+  }
 }
 </style>

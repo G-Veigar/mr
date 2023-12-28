@@ -5,15 +5,14 @@ import { event } from '../utils/event-bus'
 // import tippy from 'tippy.js';
 import { preloadImg } from '../utils/preload'
 import { nftList as tabViewDataList } from '../const'
+import { ACTIVE_NFT_INDEX, MINT_DISABELD } from '../const'
 
 const viewImg1 = 'https://static.demr.xyz/assets/card1-zxjo_0rL.png'
 const viewImg2 = 'https://static.demr.xyz/assets/card2-9-hKOMn3.png'
 const viewImg3 = 'https://static.demr.xyz/assets/card3-rA3YVBqM.png'
 
-
-
-const tabActiveIndex = ref(0)
-
+// TAG: 手动设置
+const tabActiveIndex = ref(ACTIVE_NFT_INDEX)
 
 // const currentViewData = computed(() => {
 //   return tabViewDataList[tabActiveIndex.value];
@@ -38,6 +37,16 @@ onMounted(() => {
     preloadImg(tabViewDataList[2].img)
   }, 1500)
 })
+
+function getMintBtnText(tabIndex: number) {
+  if(ACTIVE_NFT_INDEX > tabIndex) {
+    return 'Mint Ended'
+  } else if(ACTIVE_NFT_INDEX === tabIndex){
+    return 'Mint'
+  } else {
+    return 'Coming Soon'
+  }
+}
 </script>
 
 <template>
@@ -51,7 +60,7 @@ onMounted(() => {
             <div class="sub-title">{{ tabViewDataList[0].title }}</div>
             <div class="content">{{ tabViewDataList[0].content }}</div>
             <div class="tip">{{ tabViewDataList[0].tip }}</div>
-            <button class="mint-btn" disabled>Coming Soon</button>
+            <button class="mint-btn" :disabled="ACTIVE_NFT_INDEX!==0">{{getMintBtnText(0)}}</button>
           </div>
           <img class="view-img" :src="tabViewDataList[0].img" />
         </div>
@@ -60,7 +69,7 @@ onMounted(() => {
             <div class="sub-title">{{ tabViewDataList[1].title }}</div>
             <div class="content">{{ tabViewDataList[1].content }}</div>
             <div class="tip">{{ tabViewDataList[1].tip }}</div>
-            <button class="mint-btn" disabled>Coming Soon</button>
+            <button class="mint-btn" :disabled="ACTIVE_NFT_INDEX!==1">{{getMintBtnText(1)}}</button>
           </div>
           <img class="view-img" :src="tabViewDataList[1].img" />
         </div>
@@ -69,7 +78,7 @@ onMounted(() => {
             <div class="sub-title">{{ tabViewDataList[2].title }}</div>
             <div class="content">{{ tabViewDataList[2].content }}</div>
             <div class="tip">{{ tabViewDataList[2].tip }}</div>
-            <button class="mint-btn" disabled>Coming Soon</button>
+            <button class="mint-btn" :disabled="ACTIVE_NFT_INDEX!==2">{{getMintBtnText(2)}}</button>
           </div>
           <img class="view-img" :src="tabViewDataList[2].img" />
         </div>
@@ -162,8 +171,11 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     border-radius: 400px;
-    color: rgba(255, 255, 255, 0.36);
+    color: #fff;
     background: linear-gradient(0deg, #1C1C1C 0%, #1C1C1C 100%);
+    &[disabled] {
+      color: rgba(255, 255, 255, 0.36);
+    }
   }
 
   .page-main {

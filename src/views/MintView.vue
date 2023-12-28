@@ -5,6 +5,7 @@ import { useRoute } from "vue-router"
 import CommonDialog from '../components/CommonDialog.vue'
 import TopMessage from '../components/TopMessage.vue'
 import { dateFormat } from '../utils/index'
+import { ACTIVE_NFT_INDEX } from '../const'
 // @ts-ignore
 import { useWallet, WalletModalProvider } from "solana-wallets-vue";
 import {
@@ -16,6 +17,7 @@ import {
 } from "@solana/web3.js";
 import idl from "../wallet/idl.json";
 
+
 import statusPendingIcon from "../assets/status-pending.svg"
 import statusActiveIcon from "../assets/status-active.svg"
 import statusEndedIcon from "../assets/status-ended.svg"
@@ -24,8 +26,8 @@ const route = useRoute()
 const { publicKey, wallet, disconnect } = useWallet();
 
 const nftData: Ref<NFTData> = computed(() => {
-  const queryType = route.query?.type || '0' as string
-  const data = nftList[+queryType - 1]
+  const queryType = route.query?.type || ACTIVE_NFT_INDEX
+  const data = nftList[+queryType]
   return data
 })
 

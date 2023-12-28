@@ -1,14 +1,23 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import router from '../router'
 import tippy from 'tippy.js';
+import { ACTIVE_NFT_INDEX, MINT_DISABELD } from '../const'
 
 onMounted(() => {
-  tippy('#mint-main-btn', {
-    content: 'Coming soon!',
-    trigger: 'click',
-    theme: 'light',
-  });
+  if(MINT_DISABELD) {
+    tippy('#mint-main-btn', {
+      content: 'Coming soon!',
+      trigger: 'click',
+      theme: 'light',
+    });
+  }
 })
+
+function goMint() {
+  if(MINT_DISABELD) return
+  router.push(`/mint?type=${ACTIVE_NFT_INDEX}`)
+}
 </script>
 
 <template>
@@ -18,7 +27,7 @@ onMounted(() => {
       <div class="sub-title">Decentralized Mixed Reality Infrastructure Network</div>
       <div class="content">DeMR is a decentralized Mixed Reality (MR) infrastructure network (MR-DePIN), built on the
         Solana Chain, leading global users into the MR world.</div>
-      <button id="mint-main-btn" class="mint-btn">Mint</button>
+      <button id="mint-main-btn" class="mint-btn" :class="{disabled: MINT_DISABELD}" @click="goMint">Mint</button>
     </div>
     <img src="https://static.demr.xyz/assets/earth-L_RTugjn.png" class="bg-img" />
     <div class="bottom-mask"></div>
@@ -79,9 +88,12 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     border-radius: 400px;
-    color: rgba(255, 255, 255, 0.36);
+    color: #fff;
     font-size: 16px;
     background: linear-gradient(0deg, #1C1C1C 0%, #1C1C1C 100%), linear-gradient(122deg, #9013FE 10.13%, #6610F2 97.38%);
+    &.disabled {
+      color: rgba(255, 255, 255, 0.36);
+    }
   }
 
   .bottom-mask {
