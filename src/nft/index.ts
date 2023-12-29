@@ -9,8 +9,9 @@ import { IDL } from '../nft/nft_card'
 import { whiteList } from '../const'
 import { getMerkleTree } from '@/utils/white-list'
 import keccak256 from 'keccak256'
+import { ComputedRefSymbol } from '@vue/reactivity'
 
-const TOKEN_METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
+const TOKEN_METADATA_PROGRAM_ID = new web3.PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s')
 const programID = new PublicKey('5vPRVkxkf9DKr4fkHF1cdByTCz57zYxj2hc4rNZcAm2T')
 const preflightCommitment = 'processed'
 
@@ -18,20 +19,20 @@ export function useNFT(wallet: Ref<any>) {
   const connection = new Connection(clusterApiUrl('devnet'), preflightCommitment)
 
   const provider = computed(() => {
-    if (!wallet.value) return;
+    if (!wallet.value) return
     return new AnchorProvider(connection, wallet.value, {
-      preflightCommitment,
-    });
-  });
+      preflightCommitment
+    })
+  })
 
   watchEffect(() => {
-    if(provider.value) {
+    if (provider.value) {
       setProvider(provider.value)
     }
   })
 
   const program = computed(() => {
-    if (!provider.value || !provider.value) return;
+    if (!provider.value || !provider.value) return
     return new Program(IDL, programID, provider.value)
   })
 
@@ -79,52 +80,55 @@ export function useNFT(wallet: Ref<any>) {
   }
 
   const mint = async () => {
-    if(!provider.value || !program.value) return
+    if (!provider.value || !program.value) return
     try {
       const mintKey: web3.Keypair = web3.Keypair.generate()
       const [MintCounterPDA] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.Buffer.from('demr'), provider.value.publicKey.toBuffer()],
+        [Buffer.Buffer.from('demr'), wallet.value?.publicKey.toBuffer()],
         programID
       )
 
-      const CollectionMetadata = web3.PublicKey.findProgramAddressSync(
-        [Buffer.Buffer.from('metadata', 'utf8'), programID.toBuffer(), CollectionMint.toBuffer()],
-        programID
-      )
-
-      const CollectionMaster = web3.PublicKey.findProgramAddressSync(
+      const [CollectionMetadata] = web3.PublicKey.findProgramAddressSync(
         [
           Buffer.Buffer.from('metadata', 'utf8'),
-          programID.toBuffer(),
+          TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+          CollectionMint.toBuffer()
+        ],
+        TOKEN_METADATA_PROGRAM_ID
+      )
+
+      const [CollectionMaster] = web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.Buffer.from('metadata', 'utf8'),
+          TOKEN_METADATA_PROGRAM_ID.toBuffer(),
           CollectionMint.toBuffer(),
           Buffer.Buffer.from('edition', 'utf8')
         ],
-        programID
+        TOKEN_METADATA_PROGRAM_ID
       )
       const NftTokenAccount = getAssociatedTokenAddressSync(
         mintKey.publicKey,
         wallet.value?.publicKey
       )
 
-      const NFTmetadata = web3.PublicKey.findProgramAddressSync(
+      const [NFTmetadata] = web3.PublicKey.findProgramAddressSync(
         [
           Buffer.Buffer.from('metadata', 'utf8'),
-          programID.toBuffer(),
+          TOKEN_METADATA_PROGRAM_ID.toBuffer(),
           mintKey.publicKey.toBuffer()
         ],
-        programID
+        TOKEN_METADATA_PROGRAM_ID
       )
 
-      const NFTMaster = web3.PublicKey.findProgramAddressSync(
+      const [NFTMaster] = web3.PublicKey.findProgramAddressSync(
         [
           Buffer.Buffer.from('metadata', 'utf8'),
-          programID.toBuffer(),
+          TOKEN_METADATA_PROGRAM_ID.toBuffer(),
           mintKey.publicKey.toBuffer(),
           Buffer.Buffer.from('edition', 'utf8')
         ],
-        programID
+        TOKEN_METADATA_PROGRAM_ID
       )
-      console.log('CollectionMaster: *************', CollectionMaster)
 
       const proof = getMerkleTree().getProof(keccak256(wallet.value?.publicKey.toBase58()))
 
@@ -137,17 +141,25 @@ export function useNFT(wallet: Ref<any>) {
           to: new web3.PublicKey('2e7hALixuQoay72itmDU7eYYAHXQbq2yaZ5sr1XqAgYo'),
           tokenMint: mintKey.publicKey,
           tokenAccount: NftTokenAccount,
-          metadataAccount: NFTmetadata[0],
-          masterEdition: NFTMaster[0],
+          metadataAccount: NFTmetadata,
+          masterEdition: NFTMaster,
           collectionMint: CollectionMint,
-          collectionMetadataAccount: CollectionMetadata[0],
-          collectionMasterEdition: CollectionMaster[0],
+          collectionMetadataAccount: CollectionMetadata,
+          collectionMasterEdition: CollectionMaster,
           tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID
         })
         .signers([mintKey])
-        .rpc()
+        .transaction()
+      const txn = new web3.Transaction().add(
+        web3.ComputeBudgetProgram.setComputeUnitLimit({
+          units: 300_000
+        }),
+        tx
+      )
 
-      console.log('hash', tx)
+      const txsign = await provider.value.sendAndConfirm(txn, [mintKey])
+      console.log('hash', txsign)
+      await provider.value.connection.confirmTransaction(txsign, 'confirmed')
     } catch (e) {
       console.log(e)
     }
