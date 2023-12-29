@@ -90,8 +90,9 @@ function goMint() {
     border-radius: 400px;
     color: #fff;
     font-size: 16px;
-    background: linear-gradient(0deg, #1C1C1C 0%, #1C1C1C 100%), linear-gradient(122deg, #9013FE 10.13%, #6610F2 97.38%);
+    background: linear-gradient(122deg, #9013FE 10.13%, #6610F2 97.38%);
     &.disabled {
+      background: linear-gradient(0deg, #1C1C1C 0%, #1C1C1C 100%);
       color: rgba(255, 255, 255, 0.36);
     }
   }

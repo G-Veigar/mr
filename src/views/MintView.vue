@@ -258,14 +258,18 @@ onMounted(() => {
           </div> -->
           <div class="time-wrapper">
             <div class="start-icon">Coming soon</div>
-            <span>Mint Start: 31 Dec 2023</span>
+            <span>Whitelist Mint Start: 31 Dec 2023 11:00:00 UTC</span>
+          </div>
+          <div class="time-wrapper">
+            <div class="start-icon">Coming soon</div>
+            <span>Public Mint Start: 31 Dec 2023 13:00:00 UTC</span>
           </div>
         </div>
         <div class="mint-price"><img class="sol-logo" src="../assets/solana-sol-logo.png" />{{ mintPrice }} Sol</div>
         <wallet-modal-provider :dark="true">
           <template #default="modalScope">
             <slot v-bind="{ ...modalScope }">
-              <button id="mint-page-mint-btn" class="mint-btn" @click="handleMint(modalScope.openModal)">Mint</button>
+              <button id="mint-page-mint-btn" class="mint-btn" :class="{disabled: wallet}" @click="handleMint(modalScope.openModal)">Mint</button>
             </slot>
           </template>
         </wallet-modal-provider>
@@ -418,13 +422,15 @@ onMounted(() => {
     color: #fff;
     width: 100%;
     font-size: 16px;
-    /* background: linear-gradient(122deg, #9013FE 10.13%, #6610F2 97.38%); */
+    background: linear-gradient(122deg, #9013FE 10.13%, #6610F2 97.38%);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.32);
-    background: #000;
     height: 56px;
     line-height: 56px;
     margin-top: 12px;
+    &.disabled {
+      background: #000;
+    }
   }
 
   .mint-price {
@@ -458,6 +464,7 @@ onMounted(() => {
       align-items: center;
       padding: 16px 24px;
       border-radius: 12px;
+      font-size: 14px;
       margin-top: 16px;
       text-align: left;
     }
@@ -532,7 +539,9 @@ onMounted(() => {
     }
 
     .nft-img {
-      width: 480PX;
+      max-width: 480PX;
+      max-height: 50vh;
+      min-height: 380PX;
     }
 
     .nft-content {
@@ -634,4 +643,3 @@ onMounted(() => {
     }
   }
 }</style>
-../nft/idl.json

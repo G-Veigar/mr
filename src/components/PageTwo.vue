@@ -177,9 +177,10 @@ function goMint(type: number) {
     align-items: center;
     border-radius: 400px;
     color: #fff;
-    background: linear-gradient(0deg, #1C1C1C 0%, #1C1C1C 100%);
+    background: linear-gradient(122deg, #9013FE 10.13%, #6610F2 97.38%);
     &[disabled] {
       color: rgba(255, 255, 255, 0.36);
+      background: linear-gradient(0deg, #1C1C1C 0%, #1C1C1C 100%);
     }
   }
 

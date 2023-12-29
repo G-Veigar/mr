@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import router from '../router'
+import { useRoute } from 'vue-router'
 import { event } from '../utils/event-bus'
 import tippy from 'tippy.js';
 // @ts-ignore
-import { useWallet, WalletMultiButton } from "solana-wallets-vue";
+import { useAnchorWallet, WalletMultiButton } from "solana-wallets-vue";
 defineProps<{
   disabled: boolean,
 }>()
@@ -15,7 +17,7 @@ const whitePaperLink = 'https://static.demr.xyz/assets/whitepaper-IvGRdOjE.pdf'
 const h5MenuOpen = ref(false)
 const menuListShow = ref(false)
 
-const { wallet } = useWallet();
+const wallet = useAnchorWallet();
 
 function toggleMenu(status: boolean) {
   h5MenuOpen.value = status ?? !h5MenuOpen.value
@@ -39,8 +41,11 @@ function goWhitePaper() {
   toggleMenu(false)
 }
 
-function goNFT() {
-  event.emit('goToNft')
+async function goNFT() {
+  await goHome()
+  setTimeout(() => {
+    event.emit('goToNft')
+  }, 0)
   toggleMenu(false)
 }
 
@@ -51,13 +56,21 @@ onMounted(() => {
     theme: 'light',
   });
 })
+
+const $route = useRoute()
+
+async function goHome() {
+  if($route.name !== 'home') {
+    await router.push('/')
+  }
+}
 </script>
 
 <template>
   <header id="home-header" :class="{ 'menu-open': h5MenuOpen }">
     <div class="header-main">
       <div class="main-wrapper">
-        <img class="logo" src="../assets/logo.svg" alt="logo" />
+        <img class="logo" src="../assets/logo.svg" alt="logo" @click="goHome"/>
         <div class="btn-group pc">
           <button class="nft-btn" @click="goNFT">NFT</button>
           <button class="paper-btn" @click="goWhitePaper">White Paper</button>
@@ -66,6 +79,7 @@ onMounted(() => {
         </div>
         <div class="btn-group h5">
           <div class="wallet-wrapper" :class="{connected: wallet}">
+            <img class="wallet-icon-h5" src="../assets/wallet-h5.svg" alt="">
             <wallet-multi-button :dark="true"></wallet-multi-button>
           </div>
           <button class="menu-btn open" v-if="!h5MenuOpen" @click="toggleMenu(true)"></button>
@@ -110,10 +124,16 @@ onMounted(() => {
   .wallet-wrapper {
     width: 32px;
     height: 32px;
-    background: url('../assets/wallet-h5.svg') no-repeat 100% / 100% ;
-    background-position: center -2px;
     display: flex;
     align-items: stretch;
+    position: relative;
+    .wallet-icon-h5 {
+      width: 100%;
+      height: 100%;
+      top: -2px;
+      position: absolute;
+      left: 0;
+    }
 
     &.connected {
       background: none;
@@ -164,6 +184,7 @@ onMounted(() => {
     }
 
     .logo {
+      cursor: pointer;
       width: 126px;
     }
 
