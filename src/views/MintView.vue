@@ -37,7 +37,7 @@ getData()
 
 getDataMintState()
 
-mint()
+
 
 // const merkleTree = getMerkleTree()
 
@@ -174,6 +174,7 @@ function handleMint(open: Function) {
     // })
     // modalOpen.value = true;
     console.log('Coming soon~!')
+    mint()
   } else {
     open()
     nextTick(() => {

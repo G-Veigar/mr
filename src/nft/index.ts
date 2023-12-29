@@ -7,7 +7,8 @@ import * as Buffer from 'buffer'
 // import { getMerkleRoot } from "@metaplex-foundation/js";
 import { IDL } from '../nft/nft_card'
 import { whiteList } from '../const'
-import { Metaplex } from '@metaplex-foundation/js'
+import { getMerkleTree } from '@/utils/white-list'
+import keccak256 from 'keccak256'
 
 const TOKEN_METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
 const programID = new PublicKey('5vPRVkxkf9DKr4fkHF1cdByTCz57zYxj2hc4rNZcAm2T')
@@ -15,7 +16,6 @@ const preflightCommitment = 'processed'
 
 export function useNFT(wallet: Ref<any>) {
   const connection = new Connection(clusterApiUrl('devnet'), preflightCommitment)
-  const metaplex = new Metaplex(connection)
   const provider = new AnchorProvider(connection, wallet.value, {
     preflightCommitment
   })
@@ -24,11 +24,11 @@ export function useNFT(wallet: Ref<any>) {
   const program = new Program(IDL, programID, provider)
   const [AdminStateAccountPDA] = web3.PublicKey.findProgramAddressSync(
     [Buffer.Buffer.from('admin')],
-    program.programId
+    programID
   )
   const [CollectionMint] = web3.PublicKey.findProgramAddressSync(
     [Buffer.Buffer.from('collection')],
-    program.value.programId
+    programID
   )
   const getData = async () => {
     // if (!program || !provider) return
@@ -67,20 +67,71 @@ export function useNFT(wallet: Ref<any>) {
     try {
       const mintKey: web3.Keypair = web3.Keypair.generate()
       const [MintCounterPDA] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.Buffer.from('demr'), program.provider.publicKey.toBuffer()],
+        [Buffer.Buffer.from('demr'), provider.publicKey.toBuffer()],
         programID
       )
-      const CollectionMetadata = metaplex.nfts().pdas().metadata({ mint: CollectionMint })
-      const CollectionMaster = metaplex.nfts().pdas().masterEdition({ mint: CollectionMint })
+
+      const CollectionMetadata = web3.PublicKey.findProgramAddressSync(
+        [Buffer.Buffer.from('metadata', 'utf8'), programID.toBuffer(), CollectionMint.toBuffer()],
+        programID
+      )
+
+      const CollectionMaster = web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.Buffer.from('metadata', 'utf8'),
+          programID.toBuffer(),
+          CollectionMint.toBuffer(),
+          Buffer.Buffer.from('edition', 'utf8')
+        ],
+        programID
+      )
       const NftTokenAccount = getAssociatedTokenAddressSync(
         mintKey.publicKey,
         program.provider.publicKey
       )
-      const NFTmetadata = metaplex.nfts().pdas().metadata({ mint: mintKey.publicKey })
-      const NFTMaster = metaplex.nfts().pdas().masterEdition({ mint: mintKey.publicKey })
+
+      const NFTmetadata = web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.Buffer.from('metadata', 'utf8'),
+          programID.toBuffer(),
+          mintKey.publicKey.toBuffer()
+        ],
+        programID
+      )
+
+      const NFTMaster = web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.Buffer.from('metadata', 'utf8'),
+          programID.toBuffer(),
+          mintKey.publicKey.toBuffer(),
+          Buffer.Buffer.from('edition', 'utf8')
+        ],
+        programID
+      )
       console.log('CollectionMaster: *************', CollectionMaster)
 
-      // const proof = getMerkleProof(whiteList, program.provider.publicKey.toBase58())
+      const proof = getMerkleTree().getProof(keccak256(program.provider.publicKey.toBase58()))
+
+      const tx = await program.methods
+        .mint(proof.map((i) => Array.from(i.data)))
+        .accounts({
+          signer: program.provider.publicKey,
+          adminState: AdminStateAccountPDA,
+          mintCounter: MintCounterPDA,
+          to: program.provider.publicKey,
+          tokenMint: mintKey.publicKey,
+          tokenAccount: NftTokenAccount,
+          metadataAccount: NFTmetadata[0],
+          masterEdition: NFTMaster[0],
+          collectionMint: CollectionMint,
+          collectionMetadataAccount: CollectionMetadata[0],
+          collectionMasterEdition: CollectionMaster[0],
+          tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID
+        })
+        .signers([mintKey])
+        .rpc()
+
+      console.log('hash', tx)
     } catch (e) {
       console.log(e)
     }
