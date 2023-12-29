@@ -1,4 +1,4 @@
-import { ref, computed, type Ref } from 'vue'
+import { ref, computed, watchEffect, type Ref } from 'vue'
 import { web3, AnchorProvider, setProvider, Program } from '@coral-xyz/anchor'
 import { Connection, PublicKey, Keypair, clusterApiUrl, SystemProgram } from '@solana/web3.js'
 import type { NftCard } from './nft_card'
@@ -16,12 +16,25 @@ const preflightCommitment = 'processed'
 
 export function useNFT(wallet: Ref<any>) {
   const connection = new Connection(clusterApiUrl('devnet'), preflightCommitment)
-  const provider = new AnchorProvider(connection, wallet.value, {
-    preflightCommitment
+
+  const provider = computed(() => {
+    if (!wallet.value) return;
+    return new AnchorProvider(connection, wallet.value, {
+      preflightCommitment,
+    });
+  });
+
+  watchEffect(() => {
+    if(provider.value) {
+      setProvider(provider.value)
+    }
   })
 
-  setProvider(provider)
-  const program = new Program(IDL, programID, provider)
+  const program = computed(() => {
+    if (!provider.value || !provider.value) return;
+    return new Program(IDL, programID, provider.value)
+  })
+
   const [AdminStateAccountPDA] = web3.PublicKey.findProgramAddressSync(
     [Buffer.Buffer.from('admin')],
     programID
@@ -30,8 +43,9 @@ export function useNFT(wallet: Ref<any>) {
     [Buffer.Buffer.from('collection')],
     programID
   )
+
   const getData = async () => {
-    // if (!program || !provider) return
+    if (!program.value) return
     try {
       const [MintCounterPDA] = PublicKey.findProgramAddressSync(
         // [
@@ -42,32 +56,34 @@ export function useNFT(wallet: Ref<any>) {
           Buffer.Buffer.from('demr'),
           new web3.PublicKey('8eUFLPeD9Hf4bvzAKPknVuVg2efwvgMG12ydBfP87wY5').toBuffer()
         ],
-        program.programId
+        program.value.programId
       )
-      const data = await program.account.mintCounter.fetch(MintCounterPDA)
+      const data = await program.value.account.mintCounter.fetch(MintCounterPDA)
 
-      console.log('data', BigInt(data.count).toString())
-    } catch (e) {
+      console.log('getData', BigInt(data.count).toString())
+    } catch (e: any) {
+      console.log('getData e', e?.message)
       return 0
     }
   }
 
   const getDataMintState = async () => {
-    // if (!program || !provider) return
+    if (!program.value) return
     try {
-      const data = await program.account.adminState.fetch(AdminStateAccountPDA)
+      const data = await program.value.account.adminState.fetch(AdminStateAccountPDA)
 
-      return BigInt(data.mintSupply).toString()
+      return console.log('getDataMintState: mintSupply', BigInt(data.mintSupply).toString())
     } catch (e) {
       return 0
     }
   }
 
   const mint = async () => {
+    if(!provider.value || !program.value) return
     try {
       const mintKey: web3.Keypair = web3.Keypair.generate()
       const [MintCounterPDA] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.Buffer.from('demr'), provider.publicKey.toBuffer()],
+        [Buffer.Buffer.from('demr'), provider.value.publicKey.toBuffer()],
         programID
       )
 
@@ -112,7 +128,7 @@ export function useNFT(wallet: Ref<any>) {
 
       const proof = getMerkleTree().getProof(keccak256(wallet.value?.publicKey.toBase58()))
 
-      const tx = await program.methods
+      const tx = await program.value.methods
         .mint(proof.map((i) => Array.from(i.data)))
         .accounts({
           signer: wallet.value?.publicKey,
