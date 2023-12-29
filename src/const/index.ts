@@ -26,9 +26,11 @@ export const nftList:NFTData[] = [
   },
 ]
 
+export type NftIndex = 0 | 1 | 2
+
 export const MINT_DISABELD = false;
 // 当前处于mint中的nft，从0开始，0,1,2
-export const ACTIVE_NFT_INDEX: 0 | 1 | 2 = 0
+export const ACTIVE_NFT_INDEX: NftIndex = 0
 
 // 白名单用户
 export const whiteList = [
@@ -37,5 +39,20 @@ export const whiteList = [
   "GjwcWFQYzemBtpUoN5fMAP2FZviTtMRWCmrppGuTthJS",
   "AT8nPwujHAD14cLojTcB1qdBzA1VXnT6LVGuUd6Y73Cy",
 ]
+
+export type NftStatus = 'pending' | 'whiteListActive' | 'publicActive' | 'ended'
+
+export const NFT_STATUS: Record<string, NftStatus> = {
+  pending: 'pending',
+  whiteListActive: 'whiteListActive',
+  publicActive: 'publicActive',
+  ended: 'ended'
+}
+
+export const nftStatusMap: Record<NftIndex, NftStatus> = {
+  0: NFT_STATUS.pending,
+  1: NFT_STATUS.pending,
+  2: NFT_STATUS.pending
+}
 
 

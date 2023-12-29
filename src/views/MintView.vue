@@ -6,62 +6,24 @@ import tippy from 'tippy.js';
 import CommonDialog from '../components/CommonDialog.vue'
 import TopMessage from '../components/TopMessage.vue'
 import { dateFormat } from '../utils/index'
-import { ACTIVE_NFT_INDEX } from '../const'
+import { ACTIVE_NFT_INDEX, NFT_STATUS, nftStatusMap, type NftStatus, type NftIndex} from '../const'
 import statusPendingIcon from "../assets/status-pending.svg"
 import statusActiveIcon from "../assets/status-active.svg"
 import statusEndedIcon from "../assets/status-ended.svg"
 // @ts-ignore
 import { useAnchorWallet, WalletModalProvider } from "solana-wallets-vue";
 import { event } from '../utils/event-bus'
-// import { AnchorProvider, Program } from "@project-serum/anchor";
-// import {
-//   Connection,
-//   PublicKey,
-//   Keypair,
-//   clusterApiUrl,
-//   SystemProgram,
-// } from "@solana/web3.js";
-// import { IDL, type NftCard } from "../nft/nft_card";
-// import { getMerkleTree } from "../utils/white-list"
 import { useNFT } from '../nft/index'
-
-// const programID = new PublicKey(IDL.metadata.address);
-// const preflightCommitment = "processed";
 
 const route = useRoute()
 const wallet = useAnchorWallet();
 // console.log( "asdfasdfasdfasdf",wallet.value.publicKey )
-const { getData , getDataMintState, mint}= useNFT(wallet)
+const { userMintedCount , getDataMintState, mint }= useNFT(wallet)
 
-setTimeout(() => {
-  getData()
-  getDataMintState()
-}, 1000)
-
-
-
-// const merkleTree = getMerkleTree()
-
-// const merkleTreeRoot = merkleTree.getRoot()
-
-// console.log('merkleTree\n', merkleTreeRoot);
-
-// const connection = new Connection(
-//   clusterApiUrl("devnet"),
-//   preflightCommitment
-// );
-
-// const provider = computed(() => {
-//   if (!wallet.value) return;
-//   return new AnchorProvider(connection, wallet.value, {
-//     preflightCommitment,
-//   });
-// });
-// const program = computed(() => {
-//   if (!provider.value) return;
-//   // @ts-ignore
-//   return new Program(idl, programID, provider.value);
-// });
+const nftIndex = computed(() => {
+  const queryType = route.query?.type || ACTIVE_NFT_INDEX
+  return +queryType as NftIndex
+})
 
 const nftData: Ref<NFTData> = computed(() => {
   const queryType = route.query?.type || ACTIVE_NFT_INDEX
@@ -69,31 +31,11 @@ const nftData: Ref<NFTData> = computed(() => {
   return data
 })
 
-// async function connect() {
-//   try {
-//     // @ts-ignore
-//     const provider = window.okxwallet.solana;
-//     const resp = await provider.connect();
-//     console.log(resp.publicKey.toString());
-//     // 26qv4GCcx98RihuK3c4T6ozB3J7L6VwCuFVc7Ta2A3Uo
-//     // { address: string, publicKey: string }
-//   } catch (error) {
-//     console.log(error);
-//     // { code: 4001, message: "User rejected the request."}
-//   }
-// }
-
-type NftStatus = 0 | 1 | 2 | 3
-
-const NFT_STATUS: Record<string, NftStatus> = {
-  pending: 0,
-  whiteListActive: 1,
-  publicActive: 2,
-  ended: 3
-}
-
 // TODO: status获取
-const nftStatus: Ref<NftStatus> = ref(0)
+const nftStatus = computed(() => {
+  // @ts-ignore
+  return nftStatusMap[nftIndex.value]
+})
 
 const nftStatusIcon = computed(() => {
   let icon = ''
@@ -117,34 +59,49 @@ const nftStatusText = computed(() => {
 })
 
 // TODO: 活动开始时间
-const whitelistStartTime = ref(new Date())
-const publicStartTime = ref(new Date())
+// const whitelistStartTime = ref(new Date())
+// const publicStartTime = ref(new Date())
 
-const startTimeTipArr = computed(() => {
-  const tipArr = []
-  if (nftStatus.value === NFT_STATUS.pending) {
-    tipArr.push(
-      `Whitelist Mint Start ${dateFormat(whitelistStartTime.value)}`,
-      `Public Mint Start at ${dateFormat(publicStartTime.value)}`
-    )
-  } else if (nftStatus.value === NFT_STATUS.whiteListActive) {
-    tipArr.push(
-      `Public Mint Start at ${dateFormat(publicStartTime.value)}`,
-    )
-  }
-  return tipArr
-})
+// const startTimeTipArr = computed(() => {
+//   const tipArr = []
+//   if (nftStatus.value === NFT_STATUS.pending) {
+//     tipArr.push(
+//       `Whitelist Mint Start ${dateFormat(whitelistStartTime.value)}`,
+//       `Public Mint Start at ${dateFormat(publicStartTime.value)}`
+//     )
+//   } else if (nftStatus.value === NFT_STATUS.whiteListActive) {
+//     tipArr.push(
+//       `Public Mint Start at ${dateFormat(publicStartTime.value)}`,
+//     )
+//   }
+//   return tipArr
+// })
 
 // TODO: 进度获取
 const mintProgress = ref(0)
 // TODO: mint费用 sol
-const mintPrice = ref(1)
-// TODO: 最大mint上限
+const mintPrice: Ref<string | number> = ref('-')
+// TODO: 最大mint上限(每个地址)
 const maxMintCount = ref(2)
 // TODO: 已mint的数量
-const mintedCount = ref(0)
+
+getDataMintState().then(mintState => {
+  if(mintState) {
+    const { mintSupply, mintMaxSupply } = mintState
+    const percent = mintSupply / mintMaxSupply
+    if(percent < 0.01 && percent > 0) {
+      mintProgress.value = 1
+    } else if(percent > 0.99 && percent < 1) {
+      mintProgress.value = 99
+    } else {
+      mintProgress.value = +(percent).toFixed(2) * 100
+    }
+    mintPrice.value = mintState.mintPrice
+  }
+})
+
 const maxMintTip = computed(() => {
-  if (mintedCount.value >= maxMintCount.value) {
+  if (userMintedCount.value >= maxMintCount.value) {
     return {
       error: true,
       content: `You've minted ${maxMintCount.value} NFT`

@@ -32,7 +32,7 @@ export function useNFT(wallet: Ref<any>) {
   })
 
   const program = computed(() => {
-    if (!provider.value || !provider.value) return
+    if (!provider.value) return;
     return new Program(IDL, programID, provider.value)
   })
 
@@ -61,21 +61,38 @@ export function useNFT(wallet: Ref<any>) {
       )
       const data = await program.value.account.mintCounter.fetch(MintCounterPDA)
 
-      console.log('getData', BigInt(data.count).toString())
+      // console.log('getData', BigInt(data.count).toString())
+      return +BigInt(data.count).toString()
     } catch (e: any) {
       console.log('getData e', e?.message)
       return 0
     }
   }
 
+  const userMintedCount = ref(0)
+  watchEffect(async () => {
+    if (!program.value) return
+    const count = await getData()
+    if(count!==undefined) {
+      userMintedCount.value = count
+    }
+  })
+
   const getDataMintState = async () => {
     if (!program.value) return
     try {
-      const data = await program.value.account.adminState.fetch(AdminStateAccountPDA)
+      const { mintPrice, mintSupply, mintMaxSupply } = await program.value.account.adminState.fetch(AdminStateAccountPDA)
 
-      return console.log('getDataMintState: mintSupply', BigInt(data.mintSupply).toString())
-    } catch (e) {
-      return 0
+      console.log('getDataMintState: mintPrice', BigInt(mintPrice).toString())
+
+      return {
+        mintPrice: +BigInt(mintPrice).toString() / Math.pow(10, 9),
+        mintSupply: +BigInt(mintSupply).toString(),
+        mintMaxSupply: +BigInt(mintMaxSupply).toString()
+      }
+
+    } catch (e: any) {
+      console.log(e.message)
     }
   }
 
@@ -274,6 +291,7 @@ export function useNFT(wallet: Ref<any>) {
   return {
     // program,
     getData,
+    userMintedCount,
     getDataMintState,
     mint
     // whiteList,
