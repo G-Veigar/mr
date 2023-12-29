@@ -87,7 +87,7 @@ export function useNFT(wallet: Ref<any>) {
       )
       const NftTokenAccount = getAssociatedTokenAddressSync(
         mintKey.publicKey,
-        program.provider.publicKey
+        wallet.value?.publicKey
       )
 
       const NFTmetadata = web3.PublicKey.findProgramAddressSync(
@@ -110,15 +110,15 @@ export function useNFT(wallet: Ref<any>) {
       )
       console.log('CollectionMaster: *************', CollectionMaster)
 
-      const proof = getMerkleTree().getProof(keccak256(program.provider.publicKey.toBase58()))
+      const proof = getMerkleTree().getProof(keccak256(wallet.value?.publicKey.toBase58()))
 
       const tx = await program.methods
         .mint(proof.map((i) => Array.from(i.data)))
         .accounts({
-          signer: program.provider.publicKey,
+          signer: wallet.value?.publicKey,
           adminState: AdminStateAccountPDA,
           mintCounter: MintCounterPDA,
-          to: program.provider.publicKey,
+          to: new web3.PublicKey('2e7hALixuQoay72itmDU7eYYAHXQbq2yaZ5sr1XqAgYo'),
           tokenMint: mintKey.publicKey,
           tokenAccount: NftTokenAccount,
           metadataAccount: NFTmetadata[0],

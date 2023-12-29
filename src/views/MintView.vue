@@ -30,7 +30,7 @@ import { useNFT } from '../nft/index'
 
 const route = useRoute()
 const wallet = useAnchorWallet();
-
+console.log( "asdfasdfasdfasdf",wallet.value.publicKey )
 const { getData , getDataMintState,mint}= useNFT(wallet)
 
 getData()
