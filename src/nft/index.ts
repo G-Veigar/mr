@@ -1,53 +1,89 @@
 import { ref, computed, type Ref } from 'vue'
-import * as anchor from "@coral-xyz/anchor";
-import {
-  Connection,
-  PublicKey,
-  Keypair,
-  clusterApiUrl,
-  SystemProgram,
-} from "@solana/web3.js";
-import { Program, web3 } from "@coral-xyz/anchor/dist/esm/index.js";
-import type { NftCard } from "./nft_card";
-import { Metaplex, getMerkleProof } from "@metaplex-foundation/js";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
-import { publicKey } from "@coral-xyz/anchor/dist/esm/utils";
-import * as Buffer from "buffer";
+import { web3, AnchorProvider, setProvider, Program } from '@coral-xyz/anchor'
+import { Connection, PublicKey, Keypair, clusterApiUrl, SystemProgram } from '@solana/web3.js'
+import type { NftCard } from './nft_card'
+import { getAssociatedTokenAddressSync } from '@solana/spl-token'
+import * as Buffer from 'buffer'
 // import { getMerkleRoot } from "@metaplex-foundation/js";
 import { IDL } from '../nft/nft_card'
 import { whiteList } from '../const'
+import { Metaplex } from '@metaplex-foundation/js'
 
-const metadataAddress = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
-const programID = new PublicKey(metadataAddress);
-const preflightCommitment = "processed";
+const TOKEN_METADATA_PROGRAM_ID = 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
+const programID = new PublicKey('5vPRVkxkf9DKr4fkHF1cdByTCz57zYxj2hc4rNZcAm2T')
+const preflightCommitment = 'processed'
 
 export function useNFT(wallet: Ref<any>) {
-  const connection = new Connection(
-    clusterApiUrl("devnet"),
-    preflightCommitment
-  );
-
-  const provider = new anchor.AnchorProvider(connection, wallet.value, {
+  const connection = new Connection(clusterApiUrl('devnet'), preflightCommitment)
+  const metaplex = new Metaplex(connection)
+  const provider = new AnchorProvider(connection, wallet.value, {
     preflightCommitment
   })
 
-  anchor.setProvider(provider);
-
-  const program = new Program(IDL, programID, provider);
-
+  setProvider(provider)
+  const program = new Program(IDL, programID, provider)
+  const [AdminStateAccountPDA] = web3.PublicKey.findProgramAddressSync(
+    [Buffer.Buffer.from('admin')],
+    program.programId
+  )
+  const [CollectionMint] = web3.PublicKey.findProgramAddressSync(
+    [Buffer.Buffer.from('collection')],
+    program.value.programId
+  )
   const getData = async () => {
-    if(!program || !provider) return;
-    const newCounter = Keypair.generate();
+    // if (!program || !provider) return
+    try {
+      const [MintCounterPDA] = PublicKey.findProgramAddressSync(
+        // [
+        //   Buffer.Buffer.from('2e7hALixuQoay72itmDU7eYYAHXQbq2yaZ5sr1XqAgYo'),
+        //   provider.publicKey.toBuffer()
+        // ],
+        [
+          Buffer.Buffer.from('demr'),
+          new web3.PublicKey('8eUFLPeD9Hf4bvzAKPknVuVg2efwvgMG12ydBfP87wY5').toBuffer()
+        ],
+        program.programId
+      )
+      const data = await program.account.mintCounter.fetch(MintCounterPDA)
 
-    const [ MintCounterPDA ] = PublicKey.findProgramAddressSync(
-      [Buffer.Buffer.from("2e7hALixuQoay72itmDU7eYYAHXQbq2yaZ5sr1XqAgYo"), provider.publicKey.toBuffer()],
-      // [Buffer.Buffer.from("demr"), '2e7hALixuQoay72itmDU7eYYAHXQbq2yaZ5sr1XqAgYo'],
-      program.programId
-    );
-    const data = await program.account.mintCounter.fetch(
-      MintCounterPDA
-    )
-    console.log(data);
+      console.log('data', BigInt(data.count).toString())
+    } catch (e) {
+      return 0
+    }
+  }
+
+  const getDataMintState = async () => {
+    // if (!program || !provider) return
+    try {
+      const data = await program.account.adminState.fetch(AdminStateAccountPDA)
+
+      return BigInt(data.mintSupply).toString()
+    } catch (e) {
+      return 0
+    }
+  }
+
+  const mint = async () => {
+    try {
+      const mintKey: web3.Keypair = web3.Keypair.generate()
+      const [MintCounterPDA] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.Buffer.from('demr'), program.provider.publicKey.toBuffer()],
+        programID
+      )
+      const CollectionMetadata = metaplex.nfts().pdas().metadata({ mint: CollectionMint })
+      const CollectionMaster = metaplex.nfts().pdas().masterEdition({ mint: CollectionMint })
+      const NftTokenAccount = getAssociatedTokenAddressSync(
+        mintKey.publicKey,
+        program.provider.publicKey
+      )
+      const NFTmetadata = metaplex.nfts().pdas().metadata({ mint: mintKey.publicKey })
+      const NFTMaster = metaplex.nfts().pdas().masterEdition({ mint: mintKey.publicKey })
+      console.log('CollectionMaster: *************', CollectionMaster)
+
+      // const proof = getMerkleProof(whiteList, program.provider.publicKey.toBase58())
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   // anchor.setProvider(anchor.AnchorProvider.env());
@@ -158,7 +194,9 @@ export function useNFT(wallet: Ref<any>) {
   // 通过返回值暴露所管理的状态
   return {
     // program,
-    getData
+    getData,
+    getDataMintState,
+    mint
     // whiteList,
     // userMint
   }

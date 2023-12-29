@@ -15,27 +15,26 @@ export default defineConfig({
       include: ['path'],
       // To exclude specific polyfills, add them to this list. Note: if include is provided, this has no effect
       exclude: [
-        'http', // Excludes the polyfill for `http` and `node:http`.
+        'http' // Excludes the polyfill for `http` and `node:http`.
       ],
       // Whether to polyfill specific globals.
       globals: {
         Buffer: true, // can also be 'build', 'dev', or false
         global: true,
-        process: true,
+        process: true
       },
       // Override the default polyfills for specific modules.
       overrides: {
         // Since `fs` is not supported in browsers, we can use the `memfs` package to polyfill it.
-        fs: 'memfs',
+        fs: 'memfs'
       },
       // Whether to polyfill `node:` protocol imports.
-      protocolImports: true,
-    }),
+      protocolImports: true
+    })
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-      'node-fetch': 'isomorphic-fetch',
+      '@': fileURLToPath(new URL('./src', import.meta.url))
       // '@coral-xyz/anchor': '@coral-xyz/anchor/dist/browser/index.js'
     }
   },

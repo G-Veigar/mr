@@ -31,9 +31,13 @@ import { useNFT } from '../nft/index'
 const route = useRoute()
 const wallet = useAnchorWallet();
 
-const { getData }= useNFT(wallet)
+const { getData , getDataMintState,mint}= useNFT(wallet)
 
 getData()
+
+getDataMintState()
+
+mint()
 
 // const merkleTree = getMerkleTree()
 
