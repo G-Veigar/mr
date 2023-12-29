@@ -258,11 +258,11 @@ onMounted(() => {
           </div> -->
           <div class="time-wrapper">
             <div class="start-icon">Start</div>
-            <span>Whitelist Mint Start: 31 Dec 2023 11:00:00 UTC</span>
+            <span>Whitelist Mint Start:<br>31 Dec 2023 11:00:00 UTC</span>
           </div>
           <div class="time-wrapper">
             <div class="start-icon">Start</div>
-            <span>Public Mint Start: 31 Dec 2023 13:00:00 UTC</span>
+            <span>Public Mint Start:<br>31 Dec 2023 13:00:00 UTC</span>
           </div>
         </div>
         <div class="mint-price"><img class="sol-logo" src="../assets/solana-sol-logo.png" />{{ mintPrice }} Sol</div>
