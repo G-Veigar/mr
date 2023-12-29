@@ -15,7 +15,7 @@ export default defineConfig({
       include: ['path'],
       // To exclude specific polyfills, add them to this list. Note: if include is provided, this has no effect
       exclude: [
-        'http' // Excludes the polyfill for `http` and `node:http`.
+        'http', // Excludes the polyfill for `http` and `node:http`.
       ],
       // Whether to polyfill specific globals.
       globals: {
@@ -34,7 +34,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      'node-fetch': 'isomorphic-fetch',
       // '@coral-xyz/anchor': '@coral-xyz/anchor/dist/browser/index.js'
     }
   },
