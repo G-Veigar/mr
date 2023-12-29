@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { ref, computed, type Ref } from "vue";
+import { ref, computed, onMounted, watchEffect, type Ref } from "vue";
 import { nftList, type NFTData } from "../const"
 import { useRoute } from "vue-router"
+import tippy from 'tippy.js';
 import CommonDialog from '../components/CommonDialog.vue'
 import TopMessage from '../components/TopMessage.vue'
 import { dateFormat } from '../utils/index'
@@ -11,36 +12,36 @@ import statusActiveIcon from "../assets/status-active.svg"
 import statusEndedIcon from "../assets/status-ended.svg"
 // @ts-ignore
 import { useAnchorWallet, WalletModalProvider } from "solana-wallets-vue";
-import { AnchorProvider, Program } from "@project-serum/anchor";
-import {
-  Connection,
-  PublicKey,
-  Keypair,
-  clusterApiUrl,
-  SystemProgram,
-} from "@solana/web3.js";
-import { IDL, type NftCard } from "../nft/nft_card";
-import { getMerkleTree } from "../utils/white-list"
-import { useNFT } from '../nft/index'
+// import { AnchorProvider, Program } from "@project-serum/anchor";
+// import {
+//   Connection,
+//   PublicKey,
+//   Keypair,
+//   clusterApiUrl,
+//   SystemProgram,
+// } from "@solana/web3.js";
+// import { IDL, type NftCard } from "../nft/nft_card";
+// import { getMerkleTree } from "../utils/white-list"
+// import { useNFT } from '../nft/index'
 
-const { userMint }= useNFT()
+// const { userMint }= useNFT()
 
 // const programID = new PublicKey(IDL.metadata.address);
-const preflightCommitment = "processed";
+// const preflightCommitment = "processed";
 
 const route = useRoute()
 const wallet = useAnchorWallet();
 
-const merkleTree = getMerkleTree()
+// const merkleTree = getMerkleTree()
 
-const merkleTreeRoot = merkleTree.getRoot()
+// const merkleTreeRoot = merkleTree.getRoot()
 
-console.log('merkleTree\n', merkleTreeRoot);
+// console.log('merkleTree\n', merkleTreeRoot);
 
-const connection = new Connection(
-  clusterApiUrl("devnet"),
-  preflightCommitment
-);
+// const connection = new Connection(
+//   clusterApiUrl("devnet"),
+//   preflightCommitment
+// );
 
 // const provider = computed(() => {
 //   if (!wallet.value) return;
@@ -60,19 +61,19 @@ const nftData: Ref<NFTData> = computed(() => {
   return data
 })
 
-async function connect() {
-  try {
-    // @ts-ignore
-    const provider = window.okxwallet.solana;
-    const resp = await provider.connect();
-    console.log(resp.publicKey.toString());
-    // 26qv4GCcx98RihuK3c4T6ozB3J7L6VwCuFVc7Ta2A3Uo
-    // { address: string, publicKey: string }
-  } catch (error) {
-    console.log(error);
-    // { code: 4001, message: "User rejected the request."}
-  }
-}
+// async function connect() {
+//   try {
+//     // @ts-ignore
+//     const provider = window.okxwallet.solana;
+//     const resp = await provider.connect();
+//     console.log(resp.publicKey.toString());
+//     // 26qv4GCcx98RihuK3c4T6ozB3J7L6VwCuFVc7Ta2A3Uo
+//     // { address: string, publicKey: string }
+//   } catch (error) {
+//     console.log(error);
+//     // { code: 4001, message: "User rejected the request."}
+//   }
+// }
 
 type NftStatus = 0 | 1 | 2 | 3
 
@@ -133,7 +134,7 @@ const mintPrice = ref(2)
 // TODO: 最大mint上限
 const maxMintCount = ref(2)
 // TODO: 已mint的数量
-const mintedCount = ref(1)
+const mintedCount = ref(0)
 const maxMintTip = computed(() => {
   if (mintedCount.value >= maxMintCount.value) {
     return {
@@ -148,31 +149,24 @@ const maxMintTip = computed(() => {
   }
 })
 
-setTimeout(() => {
-  mintProgress.value = 90;
-}, 1000)
 const progressStyle = computed(() => {
   return {
     width: `${mintProgress.value}%`
   }
 })
 
-const modalOpen = ref<boolean>(false);
-
-const handleOk = (e: MouseEvent) => {
-  console.log(e);
-  modalOpen.value = false;
-};
+// const modalOpen = ref<boolean>(false);
 
 function handleMint(open: Function) {
   if (wallet.value) {
     // TODO: mint
-    showMessage({
-      title: 'Minting Success',
-      content: 'View on Solona FM',
-      type: 'error'
-    })
-    modalOpen.value = true;
+    // showMessage({
+    //   title: 'Minting Success',
+    //   content: 'View on Solona FM',
+    //   type: 'error'
+    // })
+    // modalOpen.value = true;
+    console.log('Coming soon~!')
   } else {
     open()
   }
@@ -207,6 +201,31 @@ function showMessage(options: {
     messageShow.value = false
   }, 5000)
 }
+
+let tippyIns: any
+
+watchEffect(() => {
+  console.log('wallet.value', wallet.value, tippyIns)
+  const ins = tippyIns?.[0]
+  if(wallet.value) {
+    ins?.enable()
+  } else {
+    // tippyIns?.hide();
+    ins?.disable()
+  }
+})
+
+
+onMounted(() => {
+  tippyIns = tippy('#mint-page-mint-btn', {
+    content: 'Coming soon!',
+    trigger: 'click',
+    theme: 'light',
+  });
+  if(!wallet.value) {
+    tippyIns?.[0]?.disable()
+  }
+})
 </script>
 
 <template>
@@ -234,15 +253,19 @@ function showMessage(options: {
           <div class="tip-title">
             Mint Schedule
           </div>
-          <div class="time-wrapper" v-for="tip in startTimeTipArr" :key="tip">
+          <!-- <div class="time-wrapper" v-for="tip in startTimeTipArr" :key="tip">
             <div class="start-icon">Start</div>{{ tip }}
+          </div> -->
+          <div class="time-wrapper">
+            <div class="start-icon">Coming soon</div>
+            <span>Mint Start: 31 Dec 2023</span>
           </div>
         </div>
         <div class="mint-price"><img class="sol-logo" src="../assets/solana-sol-logo.png" />{{ mintPrice }} Sol</div>
         <wallet-modal-provider :dark="true">
           <template #default="modalScope">
             <slot v-bind="{ ...modalScope }">
-              <button class="mint-btn" @click="handleMint(modalScope.openModal)">Mint</button>
+              <button id="mint-page-mint-btn" class="mint-btn" @click="handleMint(modalScope.openModal)">Mint</button>
             </slot>
           </template>
         </wallet-modal-provider>
@@ -395,7 +418,7 @@ function showMessage(options: {
     color: #fff;
     width: 100%;
     font-size: 16px;
-    background: linear-gradient(122deg, #9013FE 10.13%, #6610F2 97.38%);
+    /* background: linear-gradient(122deg, #9013FE 10.13%, #6610F2 97.38%); */
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.32);
     background: #000;
@@ -446,6 +469,7 @@ function showMessage(options: {
       padding: 4px 12px;
       margin-right: 12px;
       text-align: center;
+      flex: none;
     }
   }
 
@@ -569,7 +593,7 @@ function showMessage(options: {
     .mint-btn {
       color: #fff;
       width: 100%;
-      background: linear-gradient(122deg, #9013FE 10.13%, #6610F2 97.38%);
+      /* background: linear-gradient(122deg, #9013FE 10.13%, #6610F2 97.38%); */
       border-radius: 12PX;
       height: 56PX;
       line-height: 56PX;

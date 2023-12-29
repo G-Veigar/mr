@@ -32,7 +32,7 @@ export const nftList:NFTData[] = [
 
 export const MINT_DISABELD = false;
 // 当前处于mint中的nft，从0开始，0,1,2
-export const ACTIVE_NFT_INDEX: 0 | 1 | 2 = 1
+export const ACTIVE_NFT_INDEX: 0 | 1 | 2 = 0
 
 // 白名单用户
 export const whiteList = [

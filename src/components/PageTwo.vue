@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, type Ref } from 'vue'
+import router from '../router'
 import TabBar from './TabBar.vue'
 import { event } from '../utils/event-bus'
 // import tippy from 'tippy.js';
@@ -47,6 +48,10 @@ function getMintBtnText(tabIndex: number) {
     return 'Coming Soon'
   }
 }
+
+function goMint(type: number) {
+  router.push(`/mint?type=${type}`)
+}
 </script>
 
 <template>
@@ -60,7 +65,7 @@ function getMintBtnText(tabIndex: number) {
             <div class="sub-title">{{ tabViewDataList[0].title }}</div>
             <div class="content">{{ tabViewDataList[0].content }}</div>
             <div class="tip">{{ tabViewDataList[0].tip }}</div>
-            <button class="mint-btn" :disabled="ACTIVE_NFT_INDEX!==0">{{getMintBtnText(0)}}</button>
+            <button class="mint-btn" :disabled="ACTIVE_NFT_INDEX!==0" @click="goMint(0)">{{getMintBtnText(0)}}</button>
           </div>
           <img class="view-img" :src="tabViewDataList[0].img" />
         </div>
