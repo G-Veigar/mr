@@ -130,7 +130,7 @@ const startTimeTipArr = computed(() => {
 // TODO: 进度获取
 const mintProgress = ref(0)
 // TODO: mint费用 sol
-const mintPrice = ref(2)
+const mintPrice = ref(1)
 // TODO: 最大mint上限
 const maxMintCount = ref(2)
 // TODO: 已mint的数量

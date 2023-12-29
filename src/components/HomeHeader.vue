@@ -75,7 +75,7 @@ async function goHome() {
           <button class="nft-btn" @click="goNFT">NFT</button>
           <button class="paper-btn" @click="goWhitePaper">White Paper</button>
           <button id="wallet" class="wallet-btn" v-if="disabled">Connect Wallet</button>
-          <div class="wallet-btn-wrapper" v-else><wallet-multi-button :dark="true"></wallet-multi-button></div>
+          <div class="wallet-btn-wrapper" :class="{connected: wallet}" v-else><wallet-multi-button :dark="true"></wallet-multi-button></div>
         </div>
         <div class="btn-group h5">
           <div class="wallet-wrapper" :class="{connected: wallet}">
@@ -146,6 +146,8 @@ async function goHome() {
         height: 36px;
         line-height: 36px;
         font-weight: 500;
+        background: #1c1c1c !important;
+        color: #fff !important;
       }
     }
 
@@ -217,7 +219,8 @@ async function goHome() {
       }
 
       >>> .swv-button {
-        background: #1C1C1C;
+        background: #fff;
+        color: #000;
       }
 
       >>> .swv-dropdown-list {
@@ -312,6 +315,13 @@ async function goHome() {
           align-items: center;
           justify-content: flex-end;
           width: 200PX;
+
+          &.connected {
+            >>> .swv-button {
+              background: #1c1c1c;
+              color: #fff;
+            }
+          }
         }
 
         >>> .swv-button {
@@ -368,6 +378,7 @@ async function goHome() {
   .swv-button:not([disabled]):hover {
     background: rgba(255, 255, 255, 0.08) !important;
   }
+
   .swv-modal-title {
     font-size: 16PX;
     font-weight: 500;
