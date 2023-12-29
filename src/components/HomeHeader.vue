@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import router from '../router'
 import { useRoute } from 'vue-router'
 import { event } from '../utils/event-bus'
@@ -64,6 +64,13 @@ async function goHome() {
     await router.push('/')
   }
 }
+
+function handleWalletClick() {
+  nextTick(() => {
+    const $list = document.querySelector('.swv-modal-list')
+    event.emit('wallet-select', $list)
+  })
+}
 </script>
 
 <template>
@@ -75,7 +82,11 @@ async function goHome() {
           <button class="nft-btn" @click="goNFT">NFT</button>
           <button class="paper-btn" @click="goWhitePaper">White Paper</button>
           <button id="wallet" class="wallet-btn" v-if="disabled">Connect Wallet</button>
-          <div class="wallet-btn-wrapper" :class="{connected: wallet}" v-else><wallet-multi-button :dark="true"></wallet-multi-button></div>
+          <div
+            v-else
+            class="wallet-btn-wrapper"
+            :class="{connected: wallet}"
+            @click="handleWalletClick"><wallet-multi-button :dark="true"></wallet-multi-button></div>
         </div>
         <div class="btn-group h5">
           <div class="wallet-wrapper" :class="{connected: wallet}">

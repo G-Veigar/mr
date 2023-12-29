@@ -8,10 +8,6 @@ import { preloadImg } from '../utils/preload'
 import { nftList as tabViewDataList } from '../const'
 import { ACTIVE_NFT_INDEX, MINT_DISABELD } from '../const'
 
-const viewImg1 = 'https://static.demr.xyz/assets/card1-zxjo_0rL.png'
-const viewImg2 = 'https://static.demr.xyz/assets/card2-9-hKOMn3.png'
-const viewImg3 = 'https://static.demr.xyz/assets/card3-rA3YVBqM.png'
-
 // TAG: 手动设置
 const tabActiveIndex = ref(ACTIVE_NFT_INDEX)
 

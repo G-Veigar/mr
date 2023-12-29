@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted, watchEffect, type Ref } from "vue";
+import { ref, computed, onMounted, watchEffect, type Ref, nextTick } from "vue";
 import { nftList, type NFTData } from "../const"
 import { useRoute } from "vue-router"
 import tippy from 'tippy.js';
@@ -12,6 +12,7 @@ import statusActiveIcon from "../assets/status-active.svg"
 import statusEndedIcon from "../assets/status-ended.svg"
 // @ts-ignore
 import { useAnchorWallet, WalletModalProvider } from "solana-wallets-vue";
+import { event } from '../utils/event-bus'
 // import { AnchorProvider, Program } from "@project-serum/anchor";
 // import {
 //   Connection,
@@ -169,6 +170,10 @@ function handleMint(open: Function) {
     console.log('Coming soon~!')
   } else {
     open()
+    nextTick(() => {
+      const $list = document.querySelector('.swv-modal-list')
+      event.emit('wallet-select', $list)
+    })
   }
 }
 
@@ -231,7 +236,9 @@ onMounted(() => {
 <template>
   <div class="mint-page">
     <div class="page-main">
-      <div class="page-bg"></div>
+      <div class="page-bg">
+        <div class="inner-bg"></div>
+      </div>
       <div class="nft-info">
         <img class="nft-img" :src="nftData.img" />
         <div class="nft-name h5 padding" :class="{ opened: nftDetailShow }" @click="toggleOpen">{{ nftData.title }}</div>
@@ -265,7 +272,7 @@ onMounted(() => {
             <span>Public Mint Start:<br>31 Dec 2023 13:00:00 UTC</span>
           </div>
         </div>
-        <div class="mint-price"><img class="sol-logo" src="../assets/solana-sol-logo.png" />{{ mintPrice }} Sol</div>
+        <div class="mint-price"><img class="sol-logo" src="https://static.demr.xyz/assets/solana-sol-logo-RyWxbhGV.png" />{{ mintPrice }} Sol</div>
         <wallet-modal-provider :dark="true">
           <template #default="modalScope">
             <slot v-bind="{ ...modalScope }">
@@ -495,7 +502,7 @@ onMounted(() => {
 
 @media (min-width: 1024px) {
   .mint-page {
-    padding-bottom: 0;
+    padding-bottom: 68PX;
 
     .page-main {
       padding-top: 0;
@@ -512,15 +519,20 @@ onMounted(() => {
 
     .page-bg {
       display: block;
-      width: 860PX;
-      height: 860PX;
       position: absolute;
       z-index: 0;
       right: 0;
       top: 50%;
       transform: translateY(-50%);
-      background: url('../assets/mint-bg.jpg') 100% / 100% no-repeat;
       opacity: 0.5;
+      max-height: 100vh;
+      max-width: 100vh;
+      overflow: hidden;
+      .inner-bg {
+        background: url('https://static.demr.xyz/assets/mint-bg-yUDJqrh6.jpg') 100% / 100% no-repeat;
+        width: 860PX;
+        height: 860PX;
+      }
     }
 
 
@@ -540,7 +552,7 @@ onMounted(() => {
 
     .nft-img {
       max-width: 480PX;
-      max-height: 50vh;
+      max-height: 52vh;
       min-height: 380PX;
     }
 
