@@ -5,7 +5,7 @@ import { whiteList } from '../const'
 export function getMerkleTree() {
   // const beginTime = new Date()
   const leafNodes = whiteList.map(addr => keccak256(addr))
-  const merkleTree = new MerkleTree(leafNodes, keccak256)
+  const merkleTree = new MerkleTree(leafNodes, keccak256, {  sortPairs: true })
   // 获取根哈希值
   const rootHash = merkleTree.getHexRoot();
   // 需要验证的地址

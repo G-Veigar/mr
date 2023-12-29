@@ -23,15 +23,17 @@ import { event } from '../utils/event-bus'
 // } from "@solana/web3.js";
 // import { IDL, type NftCard } from "../nft/nft_card";
 // import { getMerkleTree } from "../utils/white-list"
-// import { useNFT } from '../nft/index'
-
-// const { userMint }= useNFT()
+import { useNFT } from '../nft/index'
 
 // const programID = new PublicKey(IDL.metadata.address);
 // const preflightCommitment = "processed";
 
 const route = useRoute()
 const wallet = useAnchorWallet();
+
+const { getData }= useNFT(wallet)
+
+getData()
 
 // const merkleTree = getMerkleTree()
 
