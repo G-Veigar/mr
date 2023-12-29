@@ -9,12 +9,9 @@ export function getMerkleTree() {
   // 获取根哈希值
   const rootHash = merkleTree.getHexRoot();
   // 需要验证的地址
-  const claimingAddress = leafNodes[0]
-  //取得默克尔树证明
-  const hexProof = merkleTree.getHexProof(claimingAddress)
-  // const endTime = new Date()
-  // const time = endTime.getTime() - beginTime.getTime()
-  // console.log('list length', whiteList.length)
-  // console.log('run time', time)
+  // const claimingAddress = leafNodes[0]
+  // //取得默克尔树证明
+  // const hexProof = merkleTree.getHexProof(claimingAddress)
+
   return merkleTree
 }
