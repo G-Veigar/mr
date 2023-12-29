@@ -11,7 +11,6 @@ import {
 
 import "solana-wallets-vue/styles.css";
 
-
 const walletOptions = {
     wallets: [
         new PhantomWalletAdapter(),

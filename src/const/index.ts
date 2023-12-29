@@ -33,3 +33,13 @@ export const nftList:NFTData[] = [
 export const MINT_DISABELD = false;
 // 当前处于mint中的nft，从0开始，0,1,2
 export const ACTIVE_NFT_INDEX: 0 | 1 | 2 = 1
+
+// 白名单用户
+export const whiteList = [
+  '2NSJaaktnttTfx6ryw3wvyTtLXxMKYxHVunyEL4XS6Zd',
+  "2e7hALixuQoay72itmDU7eYYAHXQbq2yaZ5sr1XqAgYo",
+  "GjwcWFQYzemBtpUoN5fMAP2FZviTtMRWCmrppGuTthJS",
+  "AT8nPwujHAD14cLojTcB1qdBzA1VXnT6LVGuUd6Y73Cy",
+]
+
+

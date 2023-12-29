@@ -6,8 +6,12 @@ import CommonDialog from '../components/CommonDialog.vue'
 import TopMessage from '../components/TopMessage.vue'
 import { dateFormat } from '../utils/index'
 import { ACTIVE_NFT_INDEX } from '../const'
+import statusPendingIcon from "../assets/status-pending.svg"
+import statusActiveIcon from "../assets/status-active.svg"
+import statusEndedIcon from "../assets/status-ended.svg"
 // @ts-ignore
-import { useWallet, WalletModalProvider } from "solana-wallets-vue";
+import { useAnchorWallet, WalletModalProvider } from "solana-wallets-vue";
+import { AnchorProvider, Program } from "@project-serum/anchor";
 import {
   Connection,
   PublicKey,
@@ -15,15 +19,40 @@ import {
   clusterApiUrl,
   SystemProgram,
 } from "@solana/web3.js";
-import idl from "../wallet/idl.json";
+import { IDL, type NftCard } from "../nft/nft_card";
+import { getMerkleTree } from "../utils/white-list"
+import { useNFT } from '../nft/index'
 
+const { userMint }= useNFT()
 
-import statusPendingIcon from "../assets/status-pending.svg"
-import statusActiveIcon from "../assets/status-active.svg"
-import statusEndedIcon from "../assets/status-ended.svg"
+// const programID = new PublicKey(IDL.metadata.address);
+const preflightCommitment = "processed";
 
 const route = useRoute()
-const { publicKey, wallet, disconnect } = useWallet();
+const wallet = useAnchorWallet();
+
+const merkleTree = getMerkleTree()
+
+const merkleTreeRoot = merkleTree.getRoot()
+
+console.log('merkleTree\n', merkleTreeRoot);
+
+const connection = new Connection(
+  clusterApiUrl("devnet"),
+  preflightCommitment
+);
+
+// const provider = computed(() => {
+//   if (!wallet.value) return;
+//   return new AnchorProvider(connection, wallet.value, {
+//     preflightCommitment,
+//   });
+// });
+// const program = computed(() => {
+//   if (!provider.value) return;
+//   // @ts-ignore
+//   return new Program(idl, programID, provider.value);
+// });
 
 const nftData: Ref<NFTData> = computed(() => {
   const queryType = route.query?.type || ACTIVE_NFT_INDEX
@@ -169,7 +198,7 @@ function showMessage(options: {
   title: string,
   content: string
 }) {
-  const {type, title, content} = options
+  const { type, title, content } = options
   messageShow.value = true
   messageType.value = type
   messageTitle.value = title
@@ -186,7 +215,7 @@ function showMessage(options: {
       <div class="page-bg"></div>
       <div class="nft-info">
         <img class="nft-img" :src="nftData.img" />
-        <div class="nft-name h5 padding" :class="{opened: nftDetailShow}" @click="toggleOpen">{{ nftData.title }}</div>
+        <div class="nft-name h5 padding" :class="{ opened: nftDetailShow }" @click="toggleOpen">{{ nftData.title }}</div>
         <div class="nft-name pc">{{ nftData.title }}</div>
         <div class="nft-content padding" v-show="nftDetailShow">{{ nftData.content }}</div>
         <div class="nft-tip padding" v-show="nftDetailShow">{{ nftData.tip }}</div>
@@ -256,6 +285,7 @@ function showMessage(options: {
     &.h5 {
       display: flex;
       align-items: center;
+
       &::after {
         display: block;
         content: '';
@@ -283,7 +313,8 @@ function showMessage(options: {
     color: #888;
     font-size: 16px;
     font-weight: 500;
-    line-height: 28px; /* 175% */
+    line-height: 28px;
+    /* 175% */
     margin-top: 12px;
   }
 
@@ -291,7 +322,8 @@ function showMessage(options: {
     color: #D7D7D7;
     font-size: 16px;
     font-weight: 500;
-    line-height: 28px; /* 175% */
+    line-height: 28px;
+    /* 175% */
     margin-top: 16px;
   }
 
@@ -422,6 +454,7 @@ function showMessage(options: {
     font-size: 16px;
     text-align: center;
     color: #D7D7D7;
+
     &.error {
       color: #f33;
       opacity: initial;
@@ -432,6 +465,7 @@ function showMessage(options: {
 @media (min-width: 1024px) {
   .mint-page {
     padding-bottom: 0;
+
     .page-main {
       padding-top: 0;
       flex: auto;
@@ -463,9 +497,11 @@ function showMessage(options: {
       font-size: 24PX;
       font-weight: 900;
       padding-left: 0px;
+
       &.pc {
         display: block;
       }
+
       &.h5 {
         display: none;
       }
@@ -574,3 +610,4 @@ function showMessage(options: {
     }
   }
 }</style>
+../nft/idl.json
