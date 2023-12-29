@@ -257,11 +257,11 @@ onMounted(() => {
             <div class="start-icon">Start</div>{{ tip }}
           </div> -->
           <div class="time-wrapper">
-            <div class="start-icon">Coming soon</div>
+            <div class="start-icon">Start</div>
             <span>Whitelist Mint Start: 31 Dec 2023 11:00:00 UTC</span>
           </div>
           <div class="time-wrapper">
-            <div class="start-icon">Coming soon</div>
+            <div class="start-icon">Start</div>
             <span>Public Mint Start: 31 Dec 2023 13:00:00 UTC</span>
           </div>
         </div>
