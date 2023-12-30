@@ -13,7 +13,7 @@ import statusEndedIcon from "../assets/status-ended.svg"
 // @ts-ignore
 import { useAnchorWallet, WalletModalProvider } from "solana-wallets-vue";
 import { event } from '../utils/event-bus'
-import { useNFT } from '../nft/index'
+import { useNFT } from '../nft/index-auto'
 import { isInWhiteList } from '../utils/white-list'
 
 const route = useRoute()
@@ -32,21 +32,12 @@ const nftData: Ref<NFTData> = computed(() => {
   return data
 })
 
-// const nftTimes = ref({
-//   startTime: 1703998800,
-//   whitelistStartTime: 1703991600,
-//   whitelistEndTime: 1703998800,
-//   endTime: 1706590800
-// })
-
-// 测试时间
 const nftTimes = ref({
-  startTime: 1703958300,
-  whitelistStartTime: 1703957400,
-  whitelistEndTime: 1703958300,
-  endTime: 1703959200
+  startTime: 1703998800,
+  whitelistStartTime: 1703991600,
+  whitelistEndTime: 1703998800,
+  endTime: 1706590800
 })
-
 
 const inWhiteList = computed(() => {
   if(!wallet.value) return
@@ -295,15 +286,16 @@ function closeLoading() {
 }
 
 const mintDisabled = computed(() => {
-  if(!wallet.value) {
-    return false
-  } else {
-    if(nftStatus.value === NFT_STATUS.pending || nftStatus.value === NFT_STATUS.ended || userMintedCount.value >= maxMintCount.value || (!inWhiteList.value && nftStatus.value === NFT_STATUS.whiteListActive)) {
-      return true
-    } else {
-      return false
-    }
-  }
+  // if(!wallet.value) {
+  //   return false
+  // } else {
+  //   if(nftStatus.value === NFT_STATUS.pending || nftStatus.value === NFT_STATUS.ended || userMintedCount.value >= maxMintCount.value || (!inWhiteList.value && nftStatus.value === NFT_STATUS.whiteListActive)) {
+  //     return true
+  //   } else {
+  //     return false
+  //   }
+  // }
+  return false
 })
 
 let tippyIns = ref()

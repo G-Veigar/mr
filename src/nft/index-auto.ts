@@ -178,12 +178,12 @@ export function useNFT(wallet: Ref<any>) {
       console.log('proof', proof)
 
       const tx = await program.value.methods
-        .mint(proof.map((i) => Array.from(i.data)))
+        .adminMint()
         .accounts({
           signer: wallet.value?.publicKey,
           adminState: AdminStateAccountPDA,
-          mintCounter: MintCounterPDA,
-          to: new web3.PublicKey(accountTo),
+          // mintCounter: MintCounterPDA,
+          // to: new web3.PublicKey(accountTo),
           tokenMint: mintKey.publicKey,
           tokenAccount: NftTokenAccount,
           metadataAccount: NFTmetadata,
