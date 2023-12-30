@@ -41,10 +41,10 @@ const nftData: Ref<NFTData> = computed(() => {
 
 // 测试时间
 const nftTimes = ref({
-  startTime: 1703958300,
-  whitelistStartTime: 1703957400,
-  whitelistEndTime: 1703958300,
-  endTime: 1703959200
+  startTime: 1703960100,
+  whitelistStartTime: 1703959200,
+  whitelistEndTime: 1703960100,
+  endTime: 1703961000
 })
 
 
@@ -58,10 +58,9 @@ const inWhiteList = computed(() => {
   }
 })
 
-
-// TODO: status获取
 const nftStatus = computed(() => {
   if(!nftTimes.value) return NFT_STATUS.pending
+  if(mintProgress.value === 100) return NFT_STATUS.ended
   let nowTime = Math.floor(Date.now() / 1000)
   if(nowTime < nftTimes.value.whitelistStartTime) {
     return NFT_STATUS.pending

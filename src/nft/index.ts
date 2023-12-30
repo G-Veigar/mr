@@ -9,7 +9,7 @@ import { getMerkleTree } from '@/utils/white-list'
 import keccak256 from 'keccak256'
 
 const TOKEN_METADATA_PROGRAM_ID = new web3.PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s')
-const programID = new PublicKey('4NrH1TgrQ35SxcuA26ECiDMrfdihRQUu44LnLCXwJXpj')
+const programID = new PublicKey('F4DW29yjwFSyvQHhKqSXF3tareLprsmxKuHWs2Ywm7YQ')
 const accountTo = 'CSTY52Qh6XM5PYVpqewBvXha7DfJBLDD5CJA3vHQLDzV'
 const preflightCommitment = 'processed'
 
