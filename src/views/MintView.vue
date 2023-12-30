@@ -32,12 +32,12 @@ const nftData: Ref<NFTData> = computed(() => {
   return data
 })
 
-const nftTimes: Ref< {
-  startTime: number,
-  whitelistStartTime: number,
-  whitelistEndTime: number,
-  endTime: number
-} | undefined> = ref()
+const nftTimes = ref({
+  startTime: 1703998800,
+  whitelistStartTime: 1703991600,
+  whitelistEndTime: 1703998800,
+  endTime: 1706590800
+})
 
 const inWhiteList = computed(() => {
   if(!wallet.value) return
@@ -86,33 +86,31 @@ const nftStatusText = computed(() => {
   return status
 })
 
-// TODO: 活动开始时间
-// const whitelistStartTime = ref(new Date())
-// const publicStartTime = ref(new Date())
-
 const startTimeTipArr = computed(() => {
   const tipArr:string[] = []
-  if(!nftTimes.value) return tipArr
+  const now = Math.floor(Date.now() / 1000)
   if (nftStatus.value === NFT_STATUS.pending) {
-    tipArr.push(
-      `Whitelist Mint Start:\n${dateFormat(new Date(nftTimes.value.whitelistStartTime * 1000))}`,
-      `Public Mint Start:\n${dateFormat(new Date(nftTimes.value.startTime * 1000))}`
-    )
+    if(nftTimes.value.whitelistStartTime > now) {
+      tipArr.push(`Whitelist Mint Start:\n${dateFormat(new Date(nftTimes.value.whitelistStartTime * 1000))}`)
+    }
+    if(nftTimes.value.startTime  > now) {
+      tipArr.push(`Public Mint Start:\n${dateFormat(new Date(nftTimes.value.startTime * 1000))}`)
+    }
   } else if (nftStatus.value === NFT_STATUS.whiteListActive) {
-    tipArr.push(
-      `Public Mint Start:\n${dateFormat(new Date(nftTimes.value.startTime * 1000))}`,
-    )
+    if(nftTimes.value.startTime  > now) {
+      tipArr.push(`Public Mint Start:\n${dateFormat(new Date(nftTimes.value.startTime * 1000))}`)
+    }
   }
   return tipArr
 })
 
-// TODO: 进度获取
+// 进度获取
 const mintProgress = ref(0)
-// TODO: mint费用 sol 固定写死1
+// mint费用 sol 固定写死1
 const mintPrice: Ref<string | number> = ref('1')
-// TODO: 最大mint上限(每个地址)
+// 最大mint上限(每个地址)
 const maxMintCount = ref(2)
-// TODO: 已mint的数量
+// 已mint的数量
 
 function setMintData() {
   getDataMintState().then(mintState => {
@@ -196,6 +194,7 @@ async function handleMint(open: Function) {
         type: 'success',
         style: 'message'
       })
+      setMintData()
     } catch (e: any) {
       console.log('handleMint error', e)
       closeLoading()
@@ -292,11 +291,20 @@ const mintDisabled = computed(() => {
   }
 })
 
-let tippyIns: any
+let tippyIns = ref()
 
 watchEffect(() => {
-  const ins = tippyIns?.[0]
-  if(mintDisabled.value &&  nftStatus.value === NFT_STATUS.pending) {
+  const ins = tippyIns.value?.[0]
+  if(!ins) return
+  if(mintDisabled.value && nftStatus.value === NFT_STATUS.pending) {
+    ins.setProps({
+      content: 'Coming soon!',
+    });
+    ins?.enable()
+  } else if(mintDisabled.value && nftStatus.value === NFT_STATUS.whiteListActive && !inWhiteList.value) {
+    ins.setProps({
+      content: 'Public mint coming soon!',
+    });
     ins?.enable()
   } else {
     // tippyIns?.hide();
@@ -306,13 +314,13 @@ watchEffect(() => {
 
 
 onMounted(() => {
-  tippyIns = tippy('#mint-page-mint-btn', {
+  tippyIns.value = tippy('#mint-page-mint-btn', {
     content: 'Coming soon!',
     trigger: 'click',
     theme: 'light',
   });
   if(!wallet.value) {
-    tippyIns?.[0]?.disable()
+    tippyIns.value?.[0]?.disable()
   }
 })
 </script>

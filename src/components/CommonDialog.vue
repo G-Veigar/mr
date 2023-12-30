@@ -71,8 +71,9 @@ function handleCancel() {
   align-items: center;
   z-index: 100;
   .dialog-box {
-    padding: 40px;
-    width: 200px;
+    padding: 20px;
+    width: 90vw;
+    min-width: 300px;
   }
 
   .lds-ring {
@@ -137,6 +138,11 @@ function handleCancel() {
 
   .close-btn {
     position: absolute;
+    width: 24PX;
+    height: 24PX;
+    top: 20PX;
+    right: 20PX;
+    background: url('../assets/close.svg') 100% 100%;
   }
 
   .title {
@@ -152,6 +158,9 @@ function handleCancel() {
   .dialog-content {
     color: #fff;
     text-align: center;
+    margin-top: 24PX;
+    font-size: 16PX;
+    margin-bottom: 16PX;
   }
 
   .btn-group {
@@ -161,6 +170,12 @@ function handleCancel() {
     button {
       flex: none;
       color: #fff;
+      height: 36PX;
+      width: 44%;
+      line-height: 36PX;
+      font-size: 14PX;
+      border-radius: 8PX;
+      flex: none;
     }
 
     .cancel-btn {
