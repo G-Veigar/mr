@@ -90,6 +90,14 @@ export function useNFT(wallet: Ref<any>) {
     }
   })
 
+  async function refreshData() {
+    if (!program.value) return
+    const count = await getData()
+    if(count!==undefined) {
+      userMintedCount.value = count
+    }
+  }
+
   const getDataMintState = async () => {
     const programIns = program.value
     if (!programIns) return
@@ -314,7 +322,7 @@ export function useNFT(wallet: Ref<any>) {
 
   // 通过返回值暴露所管理的状态
   return {
-    getData,
+    refreshData,
     userMintedCount,
     getDataMintState,
     mint,

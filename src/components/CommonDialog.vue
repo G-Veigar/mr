@@ -193,6 +193,7 @@ function handleCancel() {
     .dialog-box {
       padding: 40PX;
       width: 480PX;
+      min-width: initial;
     }
 
     .lds-ring {

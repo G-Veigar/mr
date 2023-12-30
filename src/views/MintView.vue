@@ -19,7 +19,7 @@ import { isInWhiteList } from '../utils/white-list'
 const route = useRoute()
 const wallet = useAnchorWallet();
 // console.log( "asdfasdfasdfasdf",wallet.value.publicKey )
-const { userMintedCount , getData, getDataMintState, mint, waitMintResult }= useNFT(wallet)
+const { userMintedCount , refreshData, getDataMintState, mint, waitMintResult }= useNFT(wallet)
 
 // const nftIndex = computed(() => {
 //   const queryType = route.query?.type || ACTIVE_NFT_INDEX
@@ -199,7 +199,7 @@ async function handleMint(open: Function) {
         style: 'message'
       })
       setMintData()
-      getData()
+      refreshData()
     } catch (e: any) {
       console.log('handleMint error', e)
       closeLoading()
@@ -222,7 +222,7 @@ async function handleMint(open: Function) {
       }
     }
     setMintData()
-    getData()
+    refreshData()
   } else {
     open()
     nextTick(() => {
