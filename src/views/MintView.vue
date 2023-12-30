@@ -21,10 +21,10 @@ const wallet = useAnchorWallet();
 // console.log( "asdfasdfasdfasdf",wallet.value.publicKey )
 const { userMintedCount , getDataMintState, mint, waitMintResult }= useNFT(wallet)
 
-const nftIndex = computed(() => {
-  const queryType = route.query?.type || ACTIVE_NFT_INDEX
-  return +queryType as NftIndex
-})
+// const nftIndex = computed(() => {
+//   const queryType = route.query?.type || ACTIVE_NFT_INDEX
+//   return +queryType as NftIndex
+// })
 
 const nftData: Ref<NFTData> = computed(() => {
   const queryType = route.query?.type || ACTIVE_NFT_INDEX

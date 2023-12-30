@@ -89,7 +89,7 @@ function handleWalletClick() {
             @click="handleWalletClick"><wallet-multi-button :dark="true"></wallet-multi-button></div>
         </div>
         <div class="btn-group h5">
-          <div class="wallet-wrapper" :class="{connected: wallet}">
+          <div class="wallet-wrapper" :class="{connected: wallet}" @click="handleWalletClick">
             <img class="wallet-icon-h5" src="../assets/wallet-h5.svg" alt="">
             <wallet-multi-button :dark="true"></wallet-multi-button>
           </div>

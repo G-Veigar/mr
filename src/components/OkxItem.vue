@@ -5,19 +5,19 @@ import { event } from '../utils/event-bus'
 const toEl:Ref<HTMLUListElement | undefined>  = ref()
 const itemShow = ref(false)
 
-// const ua = navigator.userAgent;
-// const isIOS = /iphone|ipad|ipod|ios/i.test(ua);
-// const isAndroid = /android|XiaoMi|MiuiBrowser/i.test(ua);
-// const isMobile = isIOS || isAndroid;
+const ua = navigator.userAgent;
+const isIOS = /iphone|ipad|ipod|ios/i.test(ua);
+const isAndroid = /android|XiaoMi|MiuiBrowser/i.test(ua);
+const isMobile = isIOS || isAndroid;
+const isOKApp = /OKApp/i.test(ua);
 
 function goOkx() {
-  // if(isMobile){
-  //   // 在欧易移动端中打开您的 DApp
-  //   window.open('https://www.okx.com/cn/web3')
-  // } else {
-  //   window.open('https://www.okx.com/cn/web3')
-  // }
-  window.open('https://www.okx.com/cn/web3')
+  if(isMobile && !isOKApp){
+    const encodedUrl = "https://www.okx.com/download?deeplink=" + encodeURIComponent("okx://wallet/dapp/url?dappUrl=" + encodeURIComponent(location.href));
+    window.location.href = encodedUrl;
+  } else {
+    window.open('https://www.okx.com/cn/web3')
+  }
 }
 
 watchEffect(() => {
