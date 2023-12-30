@@ -41,10 +41,10 @@ const nftData: Ref<NFTData> = computed(() => {
 
 // 测试时间
 const nftTimes = ref({
-  startTime: 1703960100,
-  whitelistStartTime: 1703959200,
-  whitelistEndTime: 1703960100,
-  endTime: 1703961000
+  startTime: 1703961600,
+  whitelistStartTime: 1703961300,
+  whitelistEndTime: 1703961600,
+  endTime: 1703961900
 })
 
 
