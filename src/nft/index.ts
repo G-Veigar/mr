@@ -9,7 +9,7 @@ import { getMerkleTree } from '@/utils/white-list'
 import keccak256 from 'keccak256'
 
 const TOKEN_METADATA_PROGRAM_ID = new web3.PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s')
-const programID = new PublicKey('5vPRVkxkf9DKr4fkHF1cdByTCz57zYxj2hc4rNZcAm2T')
+const programID = new PublicKey('HP3ZFi8eGqfo2NjyoTE1ZntJiWSU8YgKsPhbEU3ZVHoS')
 const preflightCommitment = 'processed'
 
 export function useNFT(wallet: Ref<any>) {
@@ -21,6 +21,19 @@ export function useNFT(wallet: Ref<any>) {
       preflightCommitment
     })
   })
+
+  // const publicProvider = new AnchorProvider(
+  //   new web3.Connection(
+  //     web3.clusterApiUrl("devnet")
+  //   ),
+  //   new Wallet(
+  //     web3.Keypair.fromSecretKey(fromB58("3einyCxKZrAUc9zS3sHoPiuZt7CtaBspUJMtGJ7h6Qkb3BwMAGpPGu95jVwKDwDRMBq9XBbKb3hrv9bzfmSt5qA9"))
+  //   ),
+  //   {
+  //   }
+  // )
+
+  // const publicProgram = new Program(IDL, programID, publicProvider)
 
   watchEffect(() => {
     if (provider.value) {
@@ -77,16 +90,22 @@ export function useNFT(wallet: Ref<any>) {
   })
 
   const getDataMintState = async () => {
-    if (!program.value) return
+    const programIns = program.value
+    if (!programIns) return
     try {
-      const { mintPrice, mintSupply, mintMaxSupply } = await program.value.account.adminState.fetch(AdminStateAccountPDA)
+      const data = await programIns.account.adminState.fetch(AdminStateAccountPDA)
+      const { mintPrice, mintSupply, mintMaxSupply, startTime, whitelistStartTime, whitelistEndTime, endTime } = data
 
-      console.log('getDataMintState: mintPrice', BigInt(mintPrice).toString())
+      console.log('getDataMintState', data)
 
       return {
         mintPrice: +BigInt(mintPrice).toString() / Math.pow(10, 9),
         mintSupply: +BigInt(mintSupply).toString(),
-        mintMaxSupply: +BigInt(mintMaxSupply).toString()
+        mintMaxSupply: +BigInt(mintMaxSupply).toString(),
+        startTime: +BigInt(startTime).toString(),
+        whitelistStartTime: +BigInt(whitelistStartTime).toString(),
+        whitelistEndTime: +BigInt(whitelistEndTime).toString(),
+        endTime: +BigInt(endTime).toString(),
       }
 
     } catch (e: any) {
@@ -292,13 +311,10 @@ export function useNFT(wallet: Ref<any>) {
 
   // 通过返回值暴露所管理的状态
   return {
-    // program,
     getData,
     userMintedCount,
     getDataMintState,
     mint,
     waitMintResult
-    // whiteList,
-    // userMint
   }
 }

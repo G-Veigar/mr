@@ -2,11 +2,11 @@
 import { ref, computed, onMounted, watchEffect, type Ref, nextTick } from "vue";
 import { nftList, type NFTData } from "../const"
 import { useRoute } from "vue-router"
-// import tippy from 'tippy.js';
+import tippy from 'tippy.js';
 import CommonDialog from '../components/CommonDialog.vue'
 import TopMessage from '../components/TopMessage.vue'
 // import { dateFormat } from '../utils/index'
-import { ACTIVE_NFT_INDEX, NFT_STATUS, nftStatusMap, type NftStatus, type NftIndex} from '../const'
+import { ACTIVE_NFT_INDEX, NFT_STATUS, type NftStatus, type NftIndex} from '../const'
 import statusPendingIcon from "../assets/status-pending.svg"
 import statusActiveIcon from "../assets/status-active.svg"
 import statusEndedIcon from "../assets/status-ended.svg"
@@ -31,10 +31,27 @@ const nftData: Ref<NFTData> = computed(() => {
   return data
 })
 
+const nftTimes: Ref< {
+  startTime: number,
+  whitelistStartTime: number,
+  whitelistEndTime: number,
+  endTime: number
+} | undefined> = ref()
+
+
 // TODO: status获取
 const nftStatus = computed(() => {
-  // @ts-ignore
-  return nftStatusMap[nftIndex.value]
+  if(!nftTimes.value) return NFT_STATUS.pending
+  let nowTime = Math.floor(Date.now() / 1000)
+  if(nowTime < nftTimes.value.whitelistStartTime) {
+    return NFT_STATUS.pending
+  } else if(nowTime < nftTimes.value.whitelistEndTime) {
+    return NFT_STATUS.whiteListActive
+  } else if(nowTime < nftTimes.value.endTime) {
+    return NFT_STATUS.publicActive
+  } else {
+    return NFT_STATUS.ended
+  }
 })
 
 const nftStatusIcon = computed(() => {
@@ -85,18 +102,32 @@ const mintPrice: Ref<string | number> = ref('-')
 const maxMintCount = ref(2)
 // TODO: 已mint的数量
 
-getDataMintState().then(mintState => {
+function setMintData() {
+  getDataMintState().then(mintState => {
   if(mintState) {
-    const { mintSupply, mintMaxSupply } = mintState
-    const percent = mintSupply / mintMaxSupply
-    if(percent < 0.01 && percent > 0) {
-      mintProgress.value = 1
-    } else if(percent > 0.99 && percent < 1) {
-      mintProgress.value = 99
-    } else {
-      mintProgress.value = +(percent).toFixed(2) * 100
+      const { mintSupply, mintMaxSupply, startTime, whitelistStartTime, whitelistEndTime, endTime } = mintState
+      nftTimes.value = {
+        startTime, whitelistStartTime, whitelistEndTime, endTime
+      }
+      const percent = mintSupply / mintMaxSupply
+      if(percent < 0.01 && percent > 0) {
+        mintProgress.value = 1
+      } else if(percent > 0.99 && percent < 1) {
+        mintProgress.value = 99
+      } else {
+        mintProgress.value = +(percent).toFixed(2) * 100
+      }
+      // mintPrice.value = mintState.mintPrice
+
+      // 固定写死1
+      mintPrice.value = 1
     }
-    mintPrice.value = mintState.mintPrice
+  })
+}
+
+watchEffect(() => {
+  if(wallet.value) {
+    setMintData()
   }
 })
 
@@ -120,35 +151,63 @@ const progressStyle = computed(() => {
   }
 })
 
-// const modalOpen = ref<boolean>(false);
+const mintSubmitted = ref(false)
 
 async function handleMint(open: Function) {
+  if(mintDisabled.value) return;
   if (wallet.value) {
     // TODO: mint
-    // showMessage({
-    //   title: 'Minting Success',
-    //   content: 'View on Solona FM',
-    //   type: 'error'
-    // })
-    // modalOpen.value = true;
-    showLoading()
     try {
+      mintSubmitted.value = false
+      showLoading()
       const txsign = await mint()
+      mintSubmitted.value = true
       closeLoading()
       if(!txsign) {
-        console.log('mint 提交失败')
+        showMessage({
+          title: 'Minting Fail',
+          content: 'View on Solona FM',
+          type: 'error',
+          style: 'dialog'
+        })
         return
+      } else {
+        showMessage({
+          title: 'Minting Submitted',
+          content: 'Minted:0/1',
+          type: 'info',
+          style: 'message'
+        })
       }
       await waitMintResult(txsign)
-      console.log('Minting Success')
-      // showMessage({
-      //   type: 'success',
-      //   title: 'Minting Success'
-      // })
-    } catch (e) {
-      closeLoading()
+      showMessage({
+        title: 'Minting Success',
+        content: 'View on Solona FM',
+        type: 'success',
+        style: 'message'
+      })
+    } catch (e: any) {
       console.log('handleMint error', e)
+      closeLoading()
+      // 分两种，提交成功，但mint失败，和直接提交就失败
+      if(mintSubmitted.value) {
+        showMessage({
+          title: 'Transaction Fail',
+          content: 'plase try again',
+          type: 'error',
+          style: 'message'
+        })
+      } else {
+        const content = e.message?.includes('User rejected the request') ? 'User rejected the request' : 'Mint Fail, Please try again'
+        showMessage({
+          title: 'Minting Fail',
+          content,
+          type: 'error',
+          style: 'dialog'
+        })
+      }
     }
+    setMintData()
   } else {
     open()
     nextTick(() => {
@@ -163,10 +222,10 @@ function toggleOpen() {
   nftDetailShow.value = !nftDetailShow.value
 }
 
-const errorMsg = ref('User rejected the request')
+const dialogContent = ref('')
 const mintDialogShow = ref(false)
 
-type MsgType = 'error' | 'success'
+type MsgType = 'error' | 'success' | 'info'
 
 const messageShow = ref(false);
 const messageType: Ref<MsgType> = ref('success')
@@ -174,18 +233,29 @@ const messageTitle = ref('')
 const messageContent = ref('')
 const loadingShow = ref(false);
 
+let closeTimer:any = 0
+
 function showMessage(options: {
   type: MsgType,
   title: string,
-  content: string
+  content: string,
+  style: 'dialog' | 'message'
 }) {
-  const { type, title, content } = options
-  messageShow.value = true
+  clearTimeout(closeTimer)
+  const { type, title, content, style } = options
+  if(style === 'dialog') {
+    mintDialogShow.value = true
+  } else {
+    messageShow.value = true
+  }
+  dialogContent.value = content
   loadingShow.value = false
   messageType.value = type
   messageTitle.value = title
   messageContent.value = content
-  setTimeout(() => {
+  // info状态是loading 不需要关闭
+  if(type === 'info') return
+  closeTimer = setTimeout(() => {
     messageShow.value = false
   }, 5000)
 }
@@ -200,30 +270,41 @@ function closeLoading() {
   loadingShow.value = false
 }
 
-// let tippyIns: any
+const mintDisabled = computed(() => {
+  if(!wallet.value) {
+    return false
+  } else {
+    if(nftStatus.value === NFT_STATUS.pending || nftStatus.value === NFT_STATUS.ended || userMintedCount.value >= maxMintCount.value) {
+      return true
+    } else {
+      return false
+    }
+  }
+})
 
-// watchEffect(() => {
-//   console.log('wallet.value', wallet.value, tippyIns)
-//   const ins = tippyIns?.[0]
-//   if(wallet.value) {
-//     ins?.enable()
-//   } else {
-//     // tippyIns?.hide();
-//     ins?.disable()
-//   }
-// })
+let tippyIns: any
+
+watchEffect(() => {
+  const ins = tippyIns?.[0]
+  if(mintDisabled.value &&  nftStatus.value === NFT_STATUS.pending) {
+    ins?.enable()
+  } else {
+    // tippyIns?.hide();
+    ins?.disable()
+  }
+})
 
 
-// onMounted(() => {
-//   tippyIns = tippy('#mint-page-mint-btn', {
-//     content: 'Coming soon!',
-//     trigger: 'click',
-//     theme: 'light',
-//   });
-//   if(!wallet.value) {
-//     tippyIns?.[0]?.disable()
-//   }
-// })
+onMounted(() => {
+  tippyIns = tippy('#mint-page-mint-btn', {
+    content: 'Coming soon!',
+    trigger: 'click',
+    theme: 'light',
+  });
+  if(!wallet.value) {
+    tippyIns?.[0]?.disable()
+  }
+})
 </script>
 
 <template>
@@ -242,7 +323,7 @@ function closeLoading() {
       <div class="mint-box">
         <div class="top-info">
           <div class="nft-status"><img class="status-icon" :src="nftStatusIcon" />{{ nftStatusText }}</div>
-          <div class="mint-progress-number">
+          <div class="mint-progress-number" v-show="wallet">
             {{ mintProgress }}% Minted
           </div>
         </div>
@@ -269,7 +350,7 @@ function closeLoading() {
         <wallet-modal-provider :dark="true">
           <template #default="modalScope">
             <slot v-bind="{ ...modalScope }">
-              <button id="mint-page-mint-btn" class="mint-btn" :class="{disabled: wallet}" @click="handleMint(modalScope.openModal)">Mint</button>
+              <button id="mint-page-mint-btn" class="mint-btn" :class="{disabled: mintDisabled}"  @click="handleMint(modalScope.openModal)">Mint</button>
             </slot>
           </template>
         </wallet-modal-provider>
@@ -278,8 +359,20 @@ function closeLoading() {
         </div>
       </div>
     </div>
-    <common-dialog :type="messageType" :content="errorMsg" v-model:show="mintDialogShow" :loading="loadingShow"></common-dialog>
-    <top-message :title="messageTitle" :show="messageShow" :content="messageContent" :type="messageType"></top-message>
+    <common-dialog
+      :type="messageType"
+      :content="dialogContent"
+      v-model:show="mintDialogShow"
+      :loading="loadingShow"
+      @confirm="handleMint">
+    </common-dialog>
+    <top-message
+      :title="messageTitle"
+      :show="messageShow"
+      :content="messageContent"
+      :type="messageType"
+    >
+    </top-message>
   </div>
 </template>
 

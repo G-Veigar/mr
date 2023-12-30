@@ -1,6 +1,6 @@
 import { MerkleTree } from 'merkletreejs'
 import keccak256 from 'keccak256'
-import { whiteList } from '../const'
+import { whiteList } from '../nft/white-list'
 
 export function getMerkleTree() {
   // const beginTime = new Date()
