@@ -70,6 +70,10 @@ function handleCancel() {
   justify-content: center;
   align-items: center;
   z-index: 100;
+  .dialog-box {
+    padding: 40px;
+    width: 200px;
+  }
 
   .lds-ring {
     display: inline-block;

@@ -4,12 +4,9 @@ import { Connection, PublicKey, Keypair, clusterApiUrl, SystemProgram } from '@s
 import type { NftCard } from './nft_card'
 import { getAssociatedTokenAddressSync } from '@solana/spl-token'
 import * as Buffer from 'buffer'
-// import { getMerkleRoot } from "@metaplex-foundation/js";
 import { IDL } from '../nft/nft_card'
-import { whiteList } from '../const'
 import { getMerkleTree } from '@/utils/white-list'
 import keccak256 from 'keccak256'
-import { ComputedRefSymbol } from '@vue/reactivity'
 
 const TOKEN_METADATA_PROGRAM_ID = new web3.PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s')
 const programID = new PublicKey('5vPRVkxkf9DKr4fkHF1cdByTCz57zYxj2hc4rNZcAm2T')
@@ -46,7 +43,7 @@ export function useNFT(wallet: Ref<any>) {
   )
 
   const getData = async () => {
-    if (!program.value) return
+    if (!program.value || !provider.value) return
     try {
       const [MintCounterPDA] = PublicKey.findProgramAddressSync(
         // [
@@ -55,7 +52,8 @@ export function useNFT(wallet: Ref<any>) {
         // ],
         [
           Buffer.Buffer.from('demr'),
-          new web3.PublicKey('8eUFLPeD9Hf4bvzAKPknVuVg2efwvgMG12ydBfP87wY5').toBuffer()
+          provider.value.publicKey.toBuffer()
+          // new web3.PublicKey('8eUFLPeD9Hf4bvzAKPknVuVg2efwvgMG12ydBfP87wY5').toBuffer()
         ],
         program.value.programId
       )
@@ -175,11 +173,16 @@ export function useNFT(wallet: Ref<any>) {
       )
 
       const txsign = await provider.value.sendAndConfirm(txn, [mintKey])
-      console.log('hash', txsign)
-      await provider.value.connection.confirmTransaction(txsign, 'confirmed')
+      return txsign
     } catch (e) {
-      console.log(e)
+      console.log('mint error', e)
+      throw e
     }
+  }
+
+  const waitMintResult  = async (txsign: string) => {
+    if (!provider.value) return
+    await provider.value.connection.confirmTransaction(txsign, 'confirmed')
   }
 
   // anchor.setProvider(anchor.AnchorProvider.env());
@@ -293,7 +296,8 @@ export function useNFT(wallet: Ref<any>) {
     getData,
     userMintedCount,
     getDataMintState,
-    mint
+    mint,
+    waitMintResult
     // whiteList,
     // userMint
   }

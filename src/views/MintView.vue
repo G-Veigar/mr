@@ -2,10 +2,10 @@
 import { ref, computed, onMounted, watchEffect, type Ref, nextTick } from "vue";
 import { nftList, type NFTData } from "../const"
 import { useRoute } from "vue-router"
-import tippy from 'tippy.js';
+// import tippy from 'tippy.js';
 import CommonDialog from '../components/CommonDialog.vue'
 import TopMessage from '../components/TopMessage.vue'
-import { dateFormat } from '../utils/index'
+// import { dateFormat } from '../utils/index'
 import { ACTIVE_NFT_INDEX, NFT_STATUS, nftStatusMap, type NftStatus, type NftIndex} from '../const'
 import statusPendingIcon from "../assets/status-pending.svg"
 import statusActiveIcon from "../assets/status-active.svg"
@@ -18,7 +18,7 @@ import { useNFT } from '../nft/index'
 const route = useRoute()
 const wallet = useAnchorWallet();
 // console.log( "asdfasdfasdfasdf",wallet.value.publicKey )
-const { userMintedCount , getDataMintState, mint }= useNFT(wallet)
+const { userMintedCount , getDataMintState, mint, waitMintResult }= useNFT(wallet)
 
 const nftIndex = computed(() => {
   const queryType = route.query?.type || ACTIVE_NFT_INDEX
@@ -122,7 +122,7 @@ const progressStyle = computed(() => {
 
 // const modalOpen = ref<boolean>(false);
 
-function handleMint(open: Function) {
+async function handleMint(open: Function) {
   if (wallet.value) {
     // TODO: mint
     // showMessage({
@@ -131,8 +131,24 @@ function handleMint(open: Function) {
     //   type: 'error'
     // })
     // modalOpen.value = true;
-    console.log('Coming soon~!')
-    mint()
+    showLoading()
+    try {
+      const txsign = await mint()
+      closeLoading()
+      if(!txsign) {
+        console.log('mint 提交失败')
+        return
+      }
+      await waitMintResult(txsign)
+      console.log('Minting Success')
+      // showMessage({
+      //   type: 'success',
+      //   title: 'Minting Success'
+      // })
+    } catch (e) {
+      closeLoading()
+      console.log('handleMint error', e)
+    }
   } else {
     open()
     nextTick(() => {
@@ -148,7 +164,7 @@ function toggleOpen() {
 }
 
 const errorMsg = ref('User rejected the request')
-const errorDialogShow = ref(false)
+const mintDialogShow = ref(false)
 
 type MsgType = 'error' | 'success'
 
@@ -156,6 +172,7 @@ const messageShow = ref(false);
 const messageType: Ref<MsgType> = ref('success')
 const messageTitle = ref('')
 const messageContent = ref('')
+const loadingShow = ref(false);
 
 function showMessage(options: {
   type: MsgType,
@@ -164,6 +181,7 @@ function showMessage(options: {
 }) {
   const { type, title, content } = options
   messageShow.value = true
+  loadingShow.value = false
   messageType.value = type
   messageTitle.value = title
   messageContent.value = content
@@ -172,30 +190,40 @@ function showMessage(options: {
   }, 5000)
 }
 
-let tippyIns: any
+function showLoading() {
+  mintDialogShow.value = true
+  loadingShow.value = true
+}
 
-watchEffect(() => {
-  console.log('wallet.value', wallet.value, tippyIns)
-  const ins = tippyIns?.[0]
-  if(wallet.value) {
-    ins?.enable()
-  } else {
-    // tippyIns?.hide();
-    ins?.disable()
-  }
-})
+function closeLoading() {
+  mintDialogShow.value = false
+  loadingShow.value = false
+}
+
+// let tippyIns: any
+
+// watchEffect(() => {
+//   console.log('wallet.value', wallet.value, tippyIns)
+//   const ins = tippyIns?.[0]
+//   if(wallet.value) {
+//     ins?.enable()
+//   } else {
+//     // tippyIns?.hide();
+//     ins?.disable()
+//   }
+// })
 
 
-onMounted(() => {
-  tippyIns = tippy('#mint-page-mint-btn', {
-    content: 'Coming soon!',
-    trigger: 'click',
-    theme: 'light',
-  });
-  if(!wallet.value) {
-    tippyIns?.[0]?.disable()
-  }
-})
+// onMounted(() => {
+//   tippyIns = tippy('#mint-page-mint-btn', {
+//     content: 'Coming soon!',
+//     trigger: 'click',
+//     theme: 'light',
+//   });
+//   if(!wallet.value) {
+//     tippyIns?.[0]?.disable()
+//   }
+// })
 </script>
 
 <template>
@@ -250,7 +278,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <common-dialog type="error" :content="errorMsg" v-model:show="errorDialogShow" :loading="true"></common-dialog>
+    <common-dialog :type="messageType" :content="errorMsg" v-model:show="mintDialogShow" :loading="loadingShow"></common-dialog>
     <top-message :title="messageTitle" :show="messageShow" :content="messageContent" :type="messageType"></top-message>
   </div>
 </template>
