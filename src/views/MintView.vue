@@ -289,7 +289,7 @@ const mintDisabled = computed(() => {
   if(!wallet.value) {
     return false
   } else {
-    if(nftStatus.value === NFT_STATUS.pending || nftStatus.value === NFT_STATUS.ended || userMintedCount.value >= maxMintCount.value || (!inWhiteList.value && nftStatus.value === NFT_STATUS.publicActive)) {
+    if(nftStatus.value === NFT_STATUS.pending || nftStatus.value === NFT_STATUS.ended || userMintedCount.value >= maxMintCount.value || (!inWhiteList.value && nftStatus.value === NFT_STATUS.whiteListActive)) {
       return true
     } else {
       return false
