@@ -14,7 +14,7 @@ const accountTo = 'CSTY52Qh6XM5PYVpqewBvXha7DfJBLDD5CJA3vHQLDzV'
 const preflightCommitment = 'processed'
 
 export function useNFT(wallet: Ref<any>) {
-  const connection = new Connection(clusterApiUrl('mainnet-beta'), preflightCommitment)
+  const connection = new Connection('https://rpc.ankr.com/solana/905281577afcd546196a6246f5c5d89cf37c5af4c4c6c6f25da53e40f5094c8f', preflightCommitment)
 
   const provider = computed(() => {
     if (!wallet.value) return
