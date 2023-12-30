@@ -15,3 +15,7 @@ export function getMerkleTree() {
 
   return merkleTree
 }
+
+export function isInWhiteList(key: string) {
+  return whiteList.includes(key)
+}

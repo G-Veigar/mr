@@ -5,7 +5,7 @@ import { useRoute } from "vue-router"
 import tippy from 'tippy.js';
 import CommonDialog from '../components/CommonDialog.vue'
 import TopMessage from '../components/TopMessage.vue'
-// import { dateFormat } from '../utils/index'
+import { dateFormat } from '../utils/index'
 import { ACTIVE_NFT_INDEX, NFT_STATUS, type NftStatus, type NftIndex} from '../const'
 import statusPendingIcon from "../assets/status-pending.svg"
 import statusActiveIcon from "../assets/status-active.svg"
@@ -14,6 +14,7 @@ import statusEndedIcon from "../assets/status-ended.svg"
 import { useAnchorWallet, WalletModalProvider } from "solana-wallets-vue";
 import { event } from '../utils/event-bus'
 import { useNFT } from '../nft/index'
+import { isInWhiteList } from '../utils/white-list'
 
 const route = useRoute()
 const wallet = useAnchorWallet();
@@ -37,6 +38,16 @@ const nftTimes: Ref< {
   whitelistEndTime: number,
   endTime: number
 } | undefined> = ref()
+
+const inWhiteList = computed(() => {
+  if(!wallet.value) return
+  // console.log('wallet.value.publicKey', wallet.value.publicKey.toString())
+  if(isInWhiteList(wallet.value.publicKey.toString())) {
+    return true
+  } else {
+    return false
+  }
+})
 
 
 // TODO: status获取
@@ -79,25 +90,26 @@ const nftStatusText = computed(() => {
 // const whitelistStartTime = ref(new Date())
 // const publicStartTime = ref(new Date())
 
-// const startTimeTipArr = computed(() => {
-//   const tipArr = []
-//   if (nftStatus.value === NFT_STATUS.pending) {
-//     tipArr.push(
-//       `Whitelist Mint Start ${dateFormat(whitelistStartTime.value)}`,
-//       `Public Mint Start at ${dateFormat(publicStartTime.value)}`
-//     )
-//   } else if (nftStatus.value === NFT_STATUS.whiteListActive) {
-//     tipArr.push(
-//       `Public Mint Start at ${dateFormat(publicStartTime.value)}`,
-//     )
-//   }
-//   return tipArr
-// })
+const startTimeTipArr = computed(() => {
+  const tipArr:string[] = []
+  if(!nftTimes.value) return tipArr
+  if (nftStatus.value === NFT_STATUS.pending) {
+    tipArr.push(
+      `Whitelist Mint Start:\n${dateFormat(new Date(nftTimes.value.whitelistStartTime * 1000))}`,
+      `Public Mint Start:\n${dateFormat(new Date(nftTimes.value.startTime * 1000))}`
+    )
+  } else if (nftStatus.value === NFT_STATUS.whiteListActive) {
+    tipArr.push(
+      `Public Mint Start:\n${dateFormat(new Date(nftTimes.value.startTime * 1000))}`,
+    )
+  }
+  return tipArr
+})
 
 // TODO: 进度获取
 const mintProgress = ref(0)
-// TODO: mint费用 sol
-const mintPrice: Ref<string | number> = ref('-')
+// TODO: mint费用 sol 固定写死1
+const mintPrice: Ref<string | number> = ref('1')
 // TODO: 最大mint上限(每个地址)
 const maxMintCount = ref(2)
 // TODO: 已mint的数量
@@ -117,10 +129,8 @@ function setMintData() {
       } else {
         mintProgress.value = +(percent).toFixed(2) * 100
       }
+       // 固定写死1
       // mintPrice.value = mintState.mintPrice
-
-      // 固定写死1
-      mintPrice.value = 1
     }
   })
 }
@@ -274,7 +284,7 @@ const mintDisabled = computed(() => {
   if(!wallet.value) {
     return false
   } else {
-    if(nftStatus.value === NFT_STATUS.pending || nftStatus.value === NFT_STATUS.ended || userMintedCount.value >= maxMintCount.value) {
+    if(nftStatus.value === NFT_STATUS.pending || nftStatus.value === NFT_STATUS.ended || userMintedCount.value >= maxMintCount.value || !inWhiteList.value) {
       return true
     } else {
       return false
@@ -334,17 +344,17 @@ onMounted(() => {
           <div class="tip-title">
             Mint Schedule
           </div>
-          <!-- <div class="time-wrapper" v-for="tip in startTimeTipArr" :key="tip">
-            <div class="start-icon">Start</div>{{ tip }}
-          </div> -->
-          <div class="time-wrapper">
+          <div class="time-wrapper" v-for="tip in startTimeTipArr" :key="tip">
+            <div class="start-icon">Start</div><pre>{{ tip }}</pre>
+          </div>
+          <!-- <div class="time-wrapper">
             <div class="start-icon">Start</div>
             <span>Whitelist Mint Start:<br>31 Dec 2023 11:00:00 UTC</span>
           </div>
           <div class="time-wrapper">
             <div class="start-icon">Start</div>
             <span>Public Mint Start:<br>31 Dec 2023 13:00:00 UTC</span>
-          </div>
+          </div> -->
         </div>
         <div class="mint-price"><img class="sol-logo" src="https://static.demr.xyz/assets/solana-sol-logo-RyWxbhGV.png" />{{ mintPrice }} Sol</div>
         <wallet-modal-provider :dark="true">

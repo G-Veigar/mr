@@ -10,6 +10,7 @@ import keccak256 from 'keccak256'
 
 const TOKEN_METADATA_PROGRAM_ID = new web3.PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s')
 const programID = new PublicKey('HP3ZFi8eGqfo2NjyoTE1ZntJiWSU8YgKsPhbEU3ZVHoS')
+const accountTo = 'CSTY52Qh6XM5PYVpqewBvXha7DfJBLDD5CJA3vHQLDzV'
 const preflightCommitment = 'processed'
 
 export function useNFT(wallet: Ref<any>) {
@@ -166,13 +167,15 @@ export function useNFT(wallet: Ref<any>) {
 
       const proof = getMerkleTree().getProof(keccak256(wallet.value?.publicKey.toBase58()))
 
+      console.log('proof', proof)
+
       const tx = await program.value.methods
         .mint(proof.map((i) => Array.from(i.data)))
         .accounts({
           signer: wallet.value?.publicKey,
           adminState: AdminStateAccountPDA,
           mintCounter: MintCounterPDA,
-          to: new web3.PublicKey('2e7hALixuQoay72itmDU7eYYAHXQbq2yaZ5sr1XqAgYo'),
+          to: new web3.PublicKey(accountTo),
           tokenMint: mintKey.publicKey,
           tokenAccount: NftTokenAccount,
           metadataAccount: NFTmetadata,
