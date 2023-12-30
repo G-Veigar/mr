@@ -19,7 +19,7 @@ import { isInWhiteList } from '../utils/white-list'
 const route = useRoute()
 const wallet = useAnchorWallet();
 // console.log( "asdfasdfasdfasdf",wallet.value.publicKey )
-const { userMintedCount , getDataMintState, mint, waitMintResult }= useNFT(wallet)
+const { userMintedCount , getData, getDataMintState, mint, waitMintResult }= useNFT(wallet)
 
 // const nftIndex = computed(() => {
 //   const queryType = route.query?.type || ACTIVE_NFT_INDEX
@@ -119,13 +119,17 @@ function setMintData() {
       nftTimes.value = {
         startTime, whitelistStartTime, whitelistEndTime, endTime
       }
-      const percent = mintSupply / mintMaxSupply
-      if(percent < 0.01 && percent > 0) {
-        mintProgress.value = 1
-      } else if(percent > 0.99 && percent < 1) {
-        mintProgress.value = 99
+      if(nftStatus.value === NFT_STATUS.pending) {
+        mintProgress.value = 0
       } else {
-        mintProgress.value = +(percent).toFixed(2) * 100
+        const percent = mintSupply / mintMaxSupply
+      if(percent < 0.01 && percent > 0) {
+          mintProgress.value = 1
+        } else if(percent > 0.99 && percent < 1) {
+          mintProgress.value = 99
+        } else {
+          mintProgress.value = +(percent).toFixed(2) * 100
+        }
       }
        // 固定写死1
       // mintPrice.value = mintState.mintPrice
@@ -195,6 +199,7 @@ async function handleMint(open: Function) {
         style: 'message'
       })
       setMintData()
+      getData()
     } catch (e: any) {
       console.log('handleMint error', e)
       closeLoading()
@@ -217,6 +222,7 @@ async function handleMint(open: Function) {
       }
     }
     setMintData()
+    getData()
   } else {
     open()
     nextTick(() => {
