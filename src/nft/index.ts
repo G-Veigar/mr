@@ -9,12 +9,12 @@ import { getMerkleTree } from '@/utils/white-list'
 import keccak256 from 'keccak256'
 
 const TOKEN_METADATA_PROGRAM_ID = new web3.PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s')
-const programID = new PublicKey('9H72YMNUbrK7uW1P8spAXzyooqU3oiKg9ZNQM5X8Man8')
+const programID = new PublicKey('5RUMHPeHqhzstgDvZGwjCLB2gS7VTK1cF5aw8aNkGiPm')
 const accountTo = 'CSTY52Qh6XM5PYVpqewBvXha7DfJBLDD5CJA3vHQLDzV'
 const preflightCommitment = 'processed'
 
 export function useNFT(wallet: Ref<any>) {
-  const connection = new Connection(clusterApiUrl('devnet'), preflightCommitment)
+  const connection = new Connection(clusterApiUrl('mainnet-beta'), preflightCommitment)
 
   const provider = computed(() => {
     if (!wallet.value) return

@@ -1280,14 +1280,32 @@ const mainWhiteList = [
   "2thRYKDSBkoAkgyMqxcYECXLCjDyFUBx7XDRtAZB5Qjo",
   "8xLAfANErR2VJc5ay3RonUHqpFFMYPgpsi2X57Emk9L4",
   "AHQE3NWQnqihHcVzgc64XQJZg2qGWsFbrNCA8QNzuNnP",
-  "8CfsG6Y8NioWeiSbDn4r1hqHsXfnLBz6MjYHrWz6rMty"
+  "8CfsG6Y8NioWeiSbDn4r1hqHsXfnLBz6MjYHrWz6rMty",
+  "j5a3TeGoCFSAauJaJZCKtiSgV3jtVkqRWteF4KZ5ruy",
+  "dsRxZaX58fMkBAGvZpYzEnt2pHye5nM4QyMMC1R4oYw",
+  "4z9WZeSFCdXJSENBZUYCobvgtwrzCAPCF686jaJSpPot",
+  "APVK1Hze8LeENm6sJc3aUzoXg99okx8uKcBFzRZcYVED",
+  "3DngLxrU1gF7koC2VAXbtaHvCYgtgHmGLw7Z2RrWQxFV",
+  "FSwhqDrXihrFkhEqyXBm1t2XRbQdxCXqWhZsMx34c51f",
+  "BK7L77U3SL5upo3g5gvKcgcJdY9tgHMbz9j3hpuBUQMb",
+  "CjQYXADnpcdsCEJCfPfzEQytsr4fv1ixfyjpnDvub6Ry",
+  "D7PTi6vnnPGHy8HWss38AxAukCMPVAcgjXACmPeW4qLJ",
+  "39BWmQYYLbAh5zyJqKUib4Tc4kLCAemsydYhnUGUowEx",
+  "EfXH3if18vS9vRNWQrArFN4trk9yLo8vixTrUrJZ5tK",
+  "2TBiqWSbHv8yCP9L9Kp8jLF8JF941pAJkxqJSjUyaP6q",
+  "7tv4Y2BfAHhqLGNZvuQEizYSVUZMSFXpQokQYDkxDZsK",
+  "EHUragdFU4Snb3MpUe2eNJrutMu4xegsF1DKj2Qu86zi",
+  "EAgWJahYhqQLLYV4GBndp2Jpeqd9615H9aTQf3S45u8Z",
+  "ESA3eDcqtS7jrc7gFRMNNAxndWmQRxXqAtHWtPsnrcZd",
+  "4SEmW5KyjZ618pCxS2DwvU59bbtHMEnCfdyUYh9kTyd2",
+  "zQbDvVFdbrFZjaPoeG7qjcM8dyBuv7ihUWH6uynR9Ve"
 ]
 
-const testWhiteList = [
-  '8eUFLPeD9Hf4bvzAKPknVuVg2efwvgMG12ydBfP87wY5',
-  'F7oJyEtuEmMtJpGYrNt6HuYFHMpRunt2Qa92MFqtd5YC',
-  '2w9M6Z1q45wCSLvRPZsxZX9zmKjFehzuWzy65dGDQbjq',
-  'FF4FRxrANvfTkTTUbJatXLCbE27e42NrwXF5Y85K5XUd'
-]
+// const testWhiteList = [
+//   '8eUFLPeD9Hf4bvzAKPknVuVg2efwvgMG12ydBfP87wY5',
+//   'F7oJyEtuEmMtJpGYrNt6HuYFHMpRunt2Qa92MFqtd5YC',
+//   '2w9M6Z1q45wCSLvRPZsxZX9zmKjFehzuWzy65dGDQbjq',
+//   'FF4FRxrANvfTkTTUbJatXLCbE27e42NrwXF5Y85K5XUd'
+// ]
 
-export const whiteList = testWhiteList
+export const whiteList = mainWhiteList

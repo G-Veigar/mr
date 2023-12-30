@@ -32,21 +32,12 @@ const nftData: Ref<NFTData> = computed(() => {
   return data
 })
 
-// const nftTimes = ref({
-//   startTime: 1703998800,
-//   whitelistStartTime: 1703991600,
-//   whitelistEndTime: 1703998800,
-//   endTime: 1706590800
-// })
-
-// 测试时间
 const nftTimes = ref({
-  startTime: 1703961600,
-  whitelistStartTime: 1703961300,
-  whitelistEndTime: 1703961600,
-  endTime: 1703961900
+  startTime: 1703998800,
+  whitelistStartTime: 1703991600,
+  whitelistEndTime: 1703998800,
+  endTime: 1706590800
 })
-
 
 const inWhiteList = computed(() => {
   if(!wallet.value) return
@@ -123,10 +114,10 @@ const maxMintCount = ref(2)
 function setMintData() {
   getDataMintState().then(mintState => {
   if(mintState) {
-      const { mintSupply, mintMaxSupply, startTime, whitelistStartTime, whitelistEndTime, endTime } = mintState
-      nftTimes.value = {
-        startTime, whitelistStartTime, whitelistEndTime, endTime
-      }
+      const { mintSupply, mintMaxSupply } = mintState
+      // nftTimes.value = {
+      //   startTime, whitelistStartTime, whitelistEndTime, endTime
+      // }
       if(nftStatus.value === NFT_STATUS.pending) {
         mintProgress.value = 0
       } else {
