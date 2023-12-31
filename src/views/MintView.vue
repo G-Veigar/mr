@@ -5,8 +5,8 @@ import { useRoute } from "vue-router"
 import tippy from 'tippy.js';
 import CommonDialog from '../components/CommonDialog.vue'
 import TopMessage from '../components/TopMessage.vue'
-import { dateFormat } from '../utils/index'
-import { ACTIVE_NFT_INDEX, NFT_STATUS, type NftStatus, type NftIndex} from '../const'
+// import { dateFormat } from '../utils/index'
+import { ACTIVE_NFT_INDEX, NFT_STATUS } from '../const'
 import statusPendingIcon from "../assets/status-pending.svg"
 import statusActiveIcon from "../assets/status-active.svg"
 import statusEndedIcon from "../assets/status-ended.svg"
@@ -33,10 +33,10 @@ const nftData: Ref<NFTData> = computed(() => {
 })
 
 const nftTimes = ref({
-  startTime: 1703998800,
-  whitelistStartTime: 1703991600,
-  whitelistEndTime: 1703998800,
-  endTime: 1706590800
+  startTime: 1704027600,
+  whitelistStartTime: 1704020400,
+  whitelistEndTime: 1704027600,
+  endTime: 1706619600
 })
 
 const inWhiteList = computed(() => {
@@ -90,14 +90,14 @@ const startTimeTipArr = computed(() => {
   const now = Math.floor(Date.now() / 1000)
   if (nftStatus.value === NFT_STATUS.pending) {
     if(nftTimes.value.whitelistStartTime > now) {
-      tipArr.push(`Whitelist Mint Start:\n${dateFormat(new Date(nftTimes.value.whitelistStartTime * 1000))}`)
+      tipArr.push(`Whitelist Mint Start:\n31 Dec 2023 11:00:00 UTC`)
     }
     if(nftTimes.value.startTime  > now) {
-      tipArr.push(`Public Mint Start:\n${dateFormat(new Date(nftTimes.value.startTime * 1000))}`)
+      tipArr.push(`Public Mint Start:\n31 Dec 2023 13:00:00 UTC`)
     }
   } else if (nftStatus.value === NFT_STATUS.whiteListActive) {
     if(nftTimes.value.startTime  > now) {
-      tipArr.push(`Public Mint Start:\n${dateFormat(new Date(nftTimes.value.startTime * 1000))}`)
+      tipArr.push(`Public Mint Start:\n31 Dec 2023 13:00:00 UTC`)
     }
   }
   return tipArr
@@ -115,9 +115,6 @@ function setMintData() {
   getDataMintState().then(mintState => {
   if(mintState) {
       const { mintSupply, mintMaxSupply } = mintState
-      // nftTimes.value = {
-      //   startTime, whitelistStartTime, whitelistEndTime, endTime
-      // }
       if(nftStatus.value === NFT_STATUS.pending) {
         mintProgress.value = 0
       } else {
@@ -256,6 +253,7 @@ function showMessage(options: {
   style: 'dialog' | 'message'
 }) {
   clearTimeout(closeTimer)
+  clearTimeout(closeDialogTimer)
   const { type, title, content, style } = options
   if(style === 'dialog') {
     mintDialogShow.value = true
@@ -274,12 +272,19 @@ function showMessage(options: {
   }, 5000)
 }
 
+let closeDialogTimer:any
+
 function showLoading() {
+  clearTimeout(closeDialogTimer)
   mintDialogShow.value = true
   loadingShow.value = true
+  closeDialogTimer = setTimeout(() => {
+    closeLoading()
+  }, 10000);
 }
 
 function closeLoading() {
+  clearTimeout(closeDialogTimer)
   mintDialogShow.value = false
   loadingShow.value = false
 }
