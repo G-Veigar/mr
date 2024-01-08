@@ -80,7 +80,7 @@ const nftStatusText = computed(() => {
   switch (nftStatus.value) {
     case NFT_STATUS.pending: status = 'Pending'; break
     case NFT_STATUS.whiteListActive: status = 'WhiteList Mint Active'; break
-    case NFT_STATUS.publicActive: status = 'Public Mint Acitve'; break
+    case NFT_STATUS.publicActive: status = 'Public Mint Active'; break
     case NFT_STATUS.ended: status = 'Ended'; break
   }
   return status
